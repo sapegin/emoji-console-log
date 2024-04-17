@@ -39,7 +39,7 @@ export class JSDebugMessageAnonymous {
     const anonymousFunctionLeftPart = selectedVarPropLoc.split('=>')[0].trim();
     const anonymousFunctionRightPart = selectedVarPropLoc
       .split('=>')[1]
-      .replace(';', '')
+      .replace(style.semicolon, '')
       .trim()
       .replace(/\)\s*;?$/, '');
     const spacesBeforeSelectedVarLine = spacesBeforeLine(
@@ -60,7 +60,8 @@ export class JSDebugMessageAnonymous {
     const isReturnBlockMultiLine =
       anonymousFunctionClosedParenthesisLine - selectedPropLine.lineNumber !==
       0;
-    textEditor.delete(selectedPropLine.rangeIncludingLineBreak);
+
+    textEditor.delete(selectedPropLine.range);
     textEditor.insert(
       new Position(selectedPropLine.lineNumber, 0),
       `${spacesBeforeSelectedVarLine}${anonymousFunctionLeftPart} => {\n`,
@@ -72,7 +73,7 @@ export class JSDebugMessageAnonymous {
       );
       let currentLine = document.lineAt(selectedPropLine.lineNumber + 1);
       do {
-        textEditor.delete(currentLine.rangeIncludingLineBreak);
+        textEditor.delete(currentLine.range);
         const addReturnKeyword =
           currentLine.lineNumber === selectedPropLine.lineNumber + 1;
         const spacesBeforeCurrentLine = spacesBeforeLine(
@@ -87,14 +88,14 @@ export class JSDebugMessageAnonymous {
           textEditor.insert(
             new Position(currentLine.lineNumber, 0),
             `${spacesBeforeCurrentLine}${
-              addReturnKeyword ? 'return ' : '\t'
+              addReturnKeyword ? 'return ' : style.tab
             }${currentLine.text.trim().replace(/\)\s*$/, '')}\n`,
           );
         } else {
           textEditor.insert(
             new Position(currentLine.lineNumber, 0),
             `${spacesBeforeCurrentLine}${
-              addReturnKeyword ? 'return ' : '\t'
+              addReturnKeyword ? 'return ' : style.tab
             }${currentLine.text.trim()}\n`,
           );
         }
@@ -106,7 +107,7 @@ export class JSDebugMessageAnonymous {
       textEditor.insert(
         new Position(anonymousFunctionClosedParenthesisLine + 1, 0),
         `${spacesBeforeSelectedVarLine}}${
-          style.semicolon && !isReturnBlockMultiLine ? ';' : ''
+          style.semicolon && !isReturnBlockMultiLine ? style.semicolon : ''
         })\n`,
       );
     } else {
@@ -130,7 +131,7 @@ export class JSDebugMessageAnonymous {
           style.semicolon &&
           !isNextLineCallToOtherFunction &&
           !nextLineIsEndWithinTheMainFunction
-            ? ';'
+            ? style.semicolon
             : ''
         }${nextLineText === '' ? '' : '\n'}`,
       );
