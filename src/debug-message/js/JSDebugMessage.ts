@@ -102,7 +102,7 @@ export class JSDebugMessage extends DebugMessage {
     selectedVar: string,
     extensionProperties: Omit<
       ExtensionProperties,
-      'wrapLogMessage' | 'insertEmptyLineAfterLogMessage'
+      'insertEmptyLineAfterLogMessage'
     >,
   ): string {
     // TODO: Use Prettier config for quote type
@@ -209,10 +209,7 @@ export class JSDebugMessage extends DebugMessage {
       (logMsg.metadata as LogContextMetadata)?.deepObjectPath
         ? (logMsg.metadata as LogContextMetadata)?.deepObjectPath
         : selectedVar,
-      omit(extensionProperties, [
-        'wrapLogMessage',
-        'insertEmptyLineAfterLogMessage',
-      ]),
+      omit(extensionProperties, ['insertEmptyLineAfterLogMessage']),
     );
     const debuggingMsg: string = this.constructDebuggingMsg(
       debuggingMsgContent,
@@ -247,7 +244,6 @@ export class JSDebugMessage extends DebugMessage {
         document,
         textEditor,
         tabSize,
-        extensionProperties.addSemicolonInTheEnd,
         selectedVarLine,
         debuggingMsgContent,
       );

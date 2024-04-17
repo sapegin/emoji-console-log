@@ -28,10 +28,11 @@ export class JSDebugMessageAnonymous {
     document: TextDocument,
     textEditor: TextEditorEdit,
     tabSize: number,
-    addSemicolonInTheEnd: boolean,
     selectedPropLine: TextLine,
     debuggingMsg: string,
   ): void {
+    // TODO: Use Prettier
+    const addSemicolonInTheEnd = true;
     const selectedVarPropLoc = selectedPropLine.text;
     const anonymousFunctionLeftPart = selectedVarPropLoc.split('=>')[0].trim();
     const anonymousFunctionRightPart = selectedVarPropLoc

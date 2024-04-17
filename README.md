@@ -58,18 +58,8 @@ Properties:
 
 | Feature                              | Description                                                                                                                 | Setting                         | Default     |
 | ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------- | ----------- |
-| Custom Prefix                        | The prefix of the log message                                                                                               | logMessagePrefix                | 🚀          |
-| Custom Suffix                        | The suffix of the log message                                                                                               | logMessageSuffix                | :           |
 | Log Type                             | The type of the log message                                                                                                 | logType                         | log         |
 | Custom Log Function                  | Custom log function to use in the inserted log message, when specified logType property will be ignored                     | logFunction                     | console.log |
-| Delimiter Inside Message             | The delimiter that will separate the different log message elements (file name, line number, class, function, and variable) | delimiterInsideMessage          | ~           |
-| Quote                                | Double quotes ("") or single quotes ('')                                                                                    | quote                           | "           |
-| Add Semicolon In The End             | Whether to put a semicolon at the end of the log message or not                                                             | addSemicolonInTheEnd            | true        |
-| Insert Enclosing Class               | Whether to insert or not the enclosing class of the selected variable in the log message                                    | insertEnclosingClass            | true        |
-| Insert Enclosing Function            | Whether to insert or not the enclosing function of the selected variable in the log message                                 | insertEnclosingFunction         | true        |
-| Include File Name And Line Number    | Whether to include the file name and the line number of the log message                                                     | includeFileNameAndLineNum       | true        |
-| Wrap Log Message                     | Whether to wrap the log message or not                                                                                      | wrapLogMessage                  | true        |
-| Insert Empty Line Before Log Message | Whether to insert an empty line before the log message or not                                                               | insertEmptyLineBeforeLogMessage | true        |
 | Insert Empty Line After Log Message  | Whether to insert an empty line after the log message or not                                                                | insertEmptyLineAfterLogMessage  | true        |
 
 ## Roadmap

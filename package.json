@@ -23,41 +23,6 @@
       "type": "object",
       "title": "Emoji Console Log Configuration",
       "properties": {
-        "turboConsoleLog.wrapLogMessage": {
-          "type": "boolean",
-          "default": false,
-          "description": "[DEPRECATED] Determine if the log message should be wrapped or not."
-        },
-        "turboConsoleLog.logMessagePrefix": {
-          "type": "string",
-          "default": "🚀",
-          "description": "[DEPRECATED] The prefix of the log message."
-        },
-        "turboConsoleLog.logMessageSuffix": {
-          "type": "string",
-          "default": ":",
-          "description": "[DEPRECATED] The suffix of the log message."
-        },
-        "turboConsoleLog.includeFileNameAndLineNum": {
-          "type": "boolean",
-          "default": false,
-          "description": "[DEPRECATED] Whether to include the file name and the line number of the log message."
-        },
-        "turboConsoleLog.addSemicolonInTheEnd": {
-          "type": "boolean",
-          "default": false,
-          "description": "[DEPRECATED] Whether to add or not a semicolon in the end of the log message."
-        },
-        "turboConsoleLog.insertEnclosingClass": {
-          "type": "boolean",
-          "default": true,
-          "description": "[DEPRECATED] Whether to insert or not the enclosing class of the selected variable in the log message."
-        },
-        "turboConsoleLog.insertEnclosingFunction": {
-          "type": "boolean",
-          "default": true,
-          "description": "[DEPRECATED] Whether to insert or not the enclosing function of the selected variable in the log message."
-        },
         "turboConsoleLog.insertEmptyLineBeforeLogMessage": {
           "type": "boolean",
           "default": false,
@@ -67,21 +32,6 @@
           "type": "boolean",
           "default": false,
           "description": "Whether to insert an empty line after the log message or not."
-        },
-        "turboConsoleLog.delimiterInsideMessage": {
-          "type": "string",
-          "default": "~",
-          "description": "[DEPRECATED] The delimiter that will separate the different log message elements (file name, line number, class, function and variable)"
-        },
-        "turboConsoleLog.quote": {
-          "type": "string",
-          "enum": [
-            "\"",
-            "'",
-            "`"
-          ],
-          "default": "\"",
-          "description": "[DEPRECATED] Double quotes, single quotes or backtick"
         },
         "turboConsoleLog.logType": {
           "type": "string",
