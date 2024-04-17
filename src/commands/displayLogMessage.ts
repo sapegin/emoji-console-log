@@ -1,7 +1,9 @@
 import * as vscode from 'vscode';
 import { DebugMessage } from '../debug-message';
 import { Command, ExtensionProperties } from '../entities';
-import { getTabSize } from '../utilities';
+import { getFileCodeStyle, getTabSize } from '../utilities';
+
+const debug = vscode.window.createOutputChannel('Emoji Console Log');
 
 export function displayLogMessageCommand(): Command {
   return {
@@ -10,13 +12,16 @@ export function displayLogMessageCommand(): Command {
       extensionProperties: ExtensionProperties,
       jsDebugMessage: DebugMessage,
     ) => {
-      const editor: vscode.TextEditor | undefined =
-        vscode.window.activeTextEditor;
+      const editor = vscode.window.activeTextEditor;
       if (!editor) {
         return;
       }
-      const tabSize: number | string = getTabSize(editor.options.tabSize);
-      const document: vscode.TextDocument = editor.document;
+      const document = editor.document;
+
+      const style = await getFileCodeStyle(document.fileName, editor.options);
+
+      debug.appendLine('🍕 style: ' + JSON.stringify(style));
+
       for (let index = 0; index < editor.selections.length; index++) {
         const selection: vscode.Selection = editor.selections[index];
         let wordUnderCursor = '';
@@ -36,7 +41,7 @@ export function displayLogMessageCommand(): Command {
               document,
               selectedVar,
               lineOfSelectedVar,
-              tabSize,
+              style,
               extensionProperties,
             );
           });

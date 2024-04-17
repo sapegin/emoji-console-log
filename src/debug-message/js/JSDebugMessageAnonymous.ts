@@ -1,7 +1,11 @@
 import { Position, TextDocument, TextEditorEdit, TextLine } from 'vscode';
 import { BracketType } from '../../entities';
 import { LineCodeProcessing } from '../../line-code-processing';
-import { spacesBeforeLine, closingContextLine } from '../../utilities';
+import {
+  spacesBeforeLine,
+  closingContextLine,
+  CodeStyle,
+} from '../../utilities';
 
 export class JSDebugMessageAnonymous {
   lineCodeProcessing: LineCodeProcessing;
@@ -27,12 +31,10 @@ export class JSDebugMessageAnonymous {
   anonymousPropDebuggingMsg(
     document: TextDocument,
     textEditor: TextEditorEdit,
-    tabSize: number,
+    style: CodeStyle,
     selectedPropLine: TextLine,
     debuggingMsg: string,
   ): void {
-    // TODO: Use Prettier
-    const addSemicolonInTheEnd = true;
     const selectedVarPropLoc = selectedPropLine.text;
     const anonymousFunctionLeftPart = selectedVarPropLoc.split('=>')[0].trim();
     const anonymousFunctionRightPart = selectedVarPropLoc
@@ -44,9 +46,7 @@ export class JSDebugMessageAnonymous {
       document,
       selectedPropLine.lineNumber,
     );
-    const spacesBeforeLinesToInsert = `${spacesBeforeSelectedVarLine}${' '.repeat(
-      tabSize,
-    )}`;
+    const spacesBeforeLinesToInsert = `${spacesBeforeSelectedVarLine}${style.tab}`;
     const isCalledInsideFunction = /\)\s*;?$/.test(selectedVarPropLoc);
     const isNextLineCallToOtherFunction = document
       .lineAt(selectedPropLine.lineNumber + 1)
@@ -106,7 +106,7 @@ export class JSDebugMessageAnonymous {
       textEditor.insert(
         new Position(anonymousFunctionClosedParenthesisLine + 1, 0),
         `${spacesBeforeSelectedVarLine}}${
-          addSemicolonInTheEnd && !isReturnBlockMultiLine ? ';' : ''
+          style.semicolon && !isReturnBlockMultiLine ? ';' : ''
         })\n`,
       );
     } else {
@@ -122,14 +122,12 @@ export class JSDebugMessageAnonymous {
       );
       textEditor.insert(
         new Position(selectedPropLine.lineNumber, 0),
-        `${spacesBeforeLinesToInsert}return ${anonymousFunctionRightPart}${
-          addSemicolonInTheEnd ? ';' : ''
-        }\n`,
+        `${spacesBeforeLinesToInsert}return ${anonymousFunctionRightPart}${style.semicolon}\n`,
       );
       textEditor.insert(
         new Position(selectedPropLine.lineNumber, 0),
         `${spacesBeforeSelectedVarLine}}${isCalledInsideFunction ? ')' : ''}${
-          addSemicolonInTheEnd &&
+          style.semicolon &&
           !isNextLineCallToOtherFunction &&
           !nextLineIsEndWithinTheMainFunction
             ? ';'

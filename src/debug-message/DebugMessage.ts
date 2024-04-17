@@ -6,6 +6,7 @@ import {
   Message,
 } from '../entities';
 import { LineCodeProcessing } from '../line-code-processing';
+import { CodeStyle } from '../utilities';
 import { DebugMessageLine } from './DebugMessageLine';
 
 export abstract class DebugMessage {
@@ -28,7 +29,7 @@ export abstract class DebugMessage {
     document: TextDocument,
     selectedVar: string,
     lineOfSelectedVar: number,
-    tabSize: number,
+    style: CodeStyle,
     extensionProperties: ExtensionProperties,
   ): void;
   abstract detectAll(document: TextDocument, logFunction: string): Message[];

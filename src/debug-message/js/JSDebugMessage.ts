@@ -9,7 +9,7 @@ import {
   MultilineContextVariable,
 } from '../../entities';
 import { LineCodeProcessing } from '../../line-code-processing';
-import _, { omit } from 'lodash';
+import _ from 'lodash';
 import { DebugMessage } from '../DebugMessage';
 import { DebugMessageLine } from '../DebugMessageLine';
 import {
@@ -17,6 +17,7 @@ import {
   closingContextLine,
   getRandomEmoji,
   emojis,
+  CodeStyle,
 } from '../../utilities';
 import { JSDebugMessageAnonymous } from './JSDebugMessageAnonymous';
 import {
@@ -92,31 +93,6 @@ export class JSDebugMessage extends DebugMessage {
     }
     return false;
   }
-  private constructDebuggingMsg(
-    debuggingMsgContent: string,
-    spacesBeforeMsg: string,
-  ): string {
-    return `${spacesBeforeMsg}${debuggingMsgContent}`;
-  }
-  private constructDebuggingMsgContent(
-    selectedVar: string,
-    extensionProperties: Omit<
-      ExtensionProperties,
-      'insertEmptyLineAfterLogMessage'
-    >,
-  ): string {
-    // TODO: Use Prettier config for quote type
-    const quote = "'";
-
-    // TODO: Use Prettier config for semicolon insertion
-    const semicolon = ';';
-
-    const logFunction = extensionProperties.logFunction;
-
-    const emoji = getRandomEmoji();
-
-    return `${logFunction}(${quote}${emoji} ${selectedVar}${quote}, ${selectedVar})${semicolon}`;
-  }
 
   private emptyBlockDebuggingMsg(
     document: TextDocument,
@@ -180,7 +156,7 @@ export class JSDebugMessage extends DebugMessage {
     document: TextDocument,
     selectedVar: string,
     lineOfSelectedVar: number,
-    tabSize: number,
+    style: CodeStyle,
     extensionProperties: ExtensionProperties,
   ): void {
     const logMsg: LogMessage = this.logMessage(
@@ -194,23 +170,17 @@ export class JSDebugMessage extends DebugMessage {
       selectedVar,
       logMsg,
     );
-    const spacesBeforeMsg: string = this.spacesBeforeLogMsg(
+    const spacesBeforeMsg = this.spacesBeforeLogMsg(
       document,
       (logMsg.metadata as LogContextMetadata)?.deepObjectLine
         ? (logMsg.metadata as LogContextMetadata)?.deepObjectLine
         : lineOfSelectedVar,
       lineOfLogMsg,
     );
-    const debuggingMsgContent: string = this.constructDebuggingMsgContent(
-      (logMsg.metadata as LogContextMetadata)?.deepObjectPath
-        ? (logMsg.metadata as LogContextMetadata)?.deepObjectPath
-        : selectedVar,
-      omit(extensionProperties, ['insertEmptyLineAfterLogMessage']),
-    );
-    const debuggingMsg: string = this.constructDebuggingMsg(
-      debuggingMsgContent,
-      spacesBeforeMsg,
-    );
+
+    const message = `${style.quote}${getRandomEmoji()} ${selectedVar}${style.quote}`;
+    const debuggingMsgContent = `${extensionProperties.logFunction}(${message}, ${selectedVar})${style.semicolon}`;
+    const debuggingMsg = `${spacesBeforeMsg}${debuggingMsgContent}`;
     const selectedVarLine = document.lineAt(lineOfSelectedVar);
     const selectedVarLineLoc = selectedVarLine.text;
     if (this.isEmptyBlockContext(document, logMsg)) {
@@ -239,7 +209,7 @@ export class JSDebugMessage extends DebugMessage {
       this.jsDebugMessageAnonymous.anonymousPropDebuggingMsg(
         document,
         textEditor,
-        tabSize,
+        style,
         selectedVarLine,
         debuggingMsgContent,
       );
