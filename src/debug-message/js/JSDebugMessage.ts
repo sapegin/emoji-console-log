@@ -319,14 +319,14 @@ export class JSDebugMessage extends DebugMessage {
       },
       [LogMessageType.MultilineBraces]: () => {
         const isChecked =
-          multilineBracesVariable !== null &&
+          multilineBracesVariable &&
           !this.lineCodeProcessing.isAssignedToVariable(currentLineText) &&
           !this.lineCodeProcessing.isAffectationToVariable(currentLineText);
-        // FIXME: No need for multilineBracesVariable !== null since it contribute already in the value of isChecked boolean
-        if (isChecked && multilineBracesVariable !== null) {
+
+        if (isChecked && multilineBracesVariable) {
           const deepObjectProperty = this.deepObjectProperty(
             document,
-            multilineBracesVariable?.openingContextLine,
+            multilineBracesVariable.openingContextLine,
             selectedVar,
           );
           if (deepObjectProperty) {
