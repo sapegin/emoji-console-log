@@ -36,7 +36,6 @@ function getExtensionProperties(
       workspaceConfig.insertEmptyLineBeforeLogMessage ?? false,
     insertEmptyLineAfterLogMessage:
       workspaceConfig.insertEmptyLineAfterLogMessage ?? false,
-    logType: workspaceConfig.logType ?? 'log',
-    logFunction: workspaceConfig.logFunction ?? 'log',
+    logFunction: workspaceConfig.logFunction ?? 'console.log',
   };
 }

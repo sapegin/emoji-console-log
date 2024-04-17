@@ -26,29 +26,17 @@
         "turboConsoleLog.insertEmptyLineBeforeLogMessage": {
           "type": "boolean",
           "default": false,
-          "description": "Whether to insert an empty line before the log message or not."
+          "description": "Whether to insert an empty line before the log message."
         },
         "turboConsoleLog.insertEmptyLineAfterLogMessage": {
           "type": "boolean",
-          "default": false,
-          "description": "Whether to insert an empty line after the log message or not."
-        },
-        "turboConsoleLog.logType": {
-          "type": "string",
-          "enum": [
-            "log",
-            "warn",
-            "error",
-            "debug",
-            "table"
-          ],
-          "default": "log",
-          "description": "Select the log type"
+          "default": true,
+          "description": "Whether to insert an empty line after the log message."
         },
         "turboConsoleLog.logFunction": {
           "type": "string",
-          "default": "log",
-          "description": "Specify a log function (when specified logType will be ignored)"
+          "default": "console.log",
+          "description": "Function to log the values."
         }
       }
     },

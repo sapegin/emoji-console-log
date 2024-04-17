@@ -111,10 +111,7 @@ export class JSDebugMessage extends DebugMessage {
     // TODO: Use Prettier config for semicolon insertion
     const semicolon = ';';
 
-    const logFunction =
-      extensionProperties.logFunction === 'log'
-        ? `console.${extensionProperties.logType}`
-        : extensionProperties.logFunction;
+    const logFunction = extensionProperties.logFunction;
 
     const emoji = getRandomEmoji();
 
