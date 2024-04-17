@@ -1,90 +1,76 @@
-# Official Website
+# Emoji Console Log Visual Studio Code extension
 
-https://www.turboconsolelog.io
+Visual Studio Code extension to insert `console.log()` statement with a random emoji and a variable (object, function, etc.) under your cursor to make debugging JavaScript and TypeScript code easier.
 
-# Main Functionality
+This is a fork of the [Turbo Console Log](https://www.turboconsolelog.io) extension. The main differences are:
 
-Turbo Console Log extension makes debugging much easier by automating the operation of writing meaningful log message.
+* Significantly simpler and doesn’t come with a lot of options, doesn’t add class name, file name, line number, etc, only the variable name.
+* Adds random emoji to each log
+* [WIP] Automatically detects the project’s code style settings (quotes, semicolons, etc.).
 
-## Sponsorship
+## Features
 
-Since the extension is free and open source, we need your support to continue developing and maintaining it. If you are interested in sponsoring the project, u can do it through the following [Link](https://donate.stripe.com/3cs28j2es9mxaGI7st) or contact us at sponsorship@turboconsolelog.io. For more information please visit: https://www.turboconsolelog.io/sponsorship
+### Insert a meaningful log message
 
-## Core Features
+Place a cursor or select the variable that you want to log, and press **Ctrl+Alt+L** (Windows) or **Ctrl+Option+L** (Mac).
 
-Full documentation of the core features can be found in the official website: https://www.turboconsolelog.io/documentation/features
+The log message will be inserted in the next line relative to the selected variable like so:
 
-### I) Insert a meaningful log message
-
-Two steps:
-
-- Selecting or hovering the variable which is the subject of the debugging (Manual selection will always take over the hover selection)
-
-- Pressing ctrl + alt + L (Windows) or ctrl + option + L (Mac)
-
-The log message will be inserted in the next line relative to the selected variable like the following:
-
-`console.log('🚀 ~ classWrappingVariable ~ functionWrappingVariable ~ variable', variable);`
-
-The log function and the content of the log message can be customized in the extension settings (see Settings section for more details).
+```js
+console.log('🦆 variable', variable);
+```
 
 Multiple cursor selection is also supported.
 
-[<u>See It In Action</u>](https://www.turboconsolelog.io/documentation/features/insert-log-message)
+### Comment all log messages, inserted by the extension, in the open file
 
-### II) Comment all log messages, inserted by the extension, from the current document
+Press **Shift+Alt+C** (Windows) or **Shift+Option+C** (Mac).
 
-All it takes to comment all log messages, inserted by the extension, from the current document is to press alt + shift + c (Windows) or option + shift + c (Mac)
+### Uncomment all log messages, inserted by the extension, in the open file
 
-[<u>See It In Action</u>](https://www.turboconsolelog.io/documentation/features/comment-inserted-log-messages)
+Press **Shift+Alt+U** (Windows) or **Shift+Option+U** (Mac).
 
-### III) Uncomment all log messages, inserted by the extension, from the current document
+### Delete all log messages, inserted by the extension, in the open file
 
-All it takes to uncomment all log messages, inserted by the extension, from the current document is to press alt + shift + u (Windows) or option + shift + u (Mac)
-
-[<u>See It In Action</u>](https://www.turboconsolelog.io/documentation/features/uncomment-log-messages)
-
-### IV) Delete all log messages, inserted by the extension, from the current document
-
-All it takes to delete all log messages, inserted by the extension, from the current document is to press alt + shift + d (Windows) or option + shift + d (Mac)
-
-[<u>See It In Action</u>](https://www.turboconsolelog.io/documentation/features/delete-log-messages)
+Press **Shift+Alt+D** (Windows) or **Shift+Option+D** (Mac).
 
 ## Settings
 
-Full documentation of the settings can be found in the official website: https://www.turboconsolelog.io/documentation/settings
+You can change the following options in the Code preferences:
 
-Properties:
+| Description  | Setting                         | Default     |
+| ------------ | ------------------------------- | ----------- |
+| Log function to use in the inserted log message | `logFunction` | `console.log` |
+| Whether to insert an empty line before the log message | `insertEmptyLineBeforeLogMessage` | false |
+| Whether to insert an empty line after the log message | `insertEmptyLineAfterLogMessage` | true |
 
-| Feature                              | Description                                                                                                                 | Setting                         | Default     |
-| ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------- | ----------- |
-| Log Type                             | The type of the log message                                                                                                 | logType                         | log         |
-| Custom Log Function                  | Custom log function to use in the inserted log message, when specified logType property will be ignored                     | logFunction                     | console.log |
-| Insert Empty Line After Log Message  | Whether to insert an empty line after the log message or not                                                                | insertEmptyLineAfterLogMessage  | true        |
+## Motivation
 
-## Roadmap
+Using `console.log()` is my favorite way of debugging JavaScript and TypeScript code. I’ve been trying to learn more fancy techniques, like a debugger, but I always come back to `console.log()`, because it’s the simplest and it works for me. 
 
-https://www.turboconsolelog.io/roadmap
+The way I do it is by adding a separate log for each variable I want to track, like so: `console.log('🍕 variable', variable)`. I always add a different emoji at the beginning, so it’s easy to differentiate logs in the browser console.
 
-## Articles
+I wanted the easiest way to manage such logs so I found the [Turbo Console Log](https://www.turboconsolelog.io) extension that does most of what I wanted but not in a way I’d like. I decided to make a fork instead of contributing more options to the original extension because I felt my vision would be very different from the vision of the original extension.
 
-- [<u>Introducing Our New Website</u>](https://www.turboconsolelog.io/articles/introducing-new-website)
-- [<u>Motivation behind Turbo Console Log</u>](https://www.turboconsolelog.io/articles/motivation-behind-tcl)
+## Changelog
 
-## Contact
+The changelog can be found on the [Changelog.md](./Changelog.md) file.
 
-- Support: [support@turboconsolelog.io](mailto:support@turboconsolelog.io)
-- Feedback: [feedback@turboconsolelog.io](mailto:feedback@turboconsolelog.io)
-- Sponsorship: [sponsorship@turboconsolelog.io](mailto:sponsorship@turboconsolelog.io)
+## Sponsoring
 
-## Release Notes
+This software has been developed with lots of coffee, buy me one more cup to keep it going.
 
-See the [<u>Changelog file</u>](https://marketplace.visualstudio.com/items/ChakrounAnas.turbo-console-log/changelog) for details.
+<a href="https://www.buymeacoffee.com/sapegin" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/lato-orange.png" alt="Buy Me A Coffee" height="51" width="217"></a>
 
-## Participate
+## Contributing
 
-You're more than welcome to participate in the development of the extension by creating pull requests and submitting issues, link of the project in github: https://github.com/Chakroun-Anas/turbo-console-log
+Bug fixes are welcome, but not new features. Please take a moment to review the [contributing guidelines](Contributing.md).
 
-## License
+## Authors and license
 
-MIT Copyright &copy; Turbo Console Log
+[Artem Sapegin](https://sapegin.me), and [contributors](https://github.com/sapegin/emoji-console-log/graphs/contributors).
+
+This extension is based on [Turbo Console Log](https://github.com/Chakroun-Anas/turbo-console-log) by [
+Chakroun Anas](https://github.com/Chakroun-Anas) and its [contributors](https://github.com/Chakroun-Anas/turbo-console-log/graphs/contributors).
+
+MIT License, see the included [License.md](License.md) file.
