@@ -36,7 +36,7 @@ export default (): void => {
           ),
         ];
         await vscode.commands.executeCommand(
-          'turboConsoleLog.displayLogMessage',
+          'emojiConsoleLog.displayLogMessage',
           [],
         );
         // Console log message is appended to the end of the document starting with /n character
@@ -62,7 +62,7 @@ export default (): void => {
           ),
         ];
         await vscode.commands.executeCommand(
-          'turboConsoleLog.displayLogMessage',
+          'emojiConsoleLog.displayLogMessage',
           [],
         );
         // Console log message is appended to the end of the document starting with /n character
@@ -88,7 +88,7 @@ export default (): void => {
           ),
         ];
         await vscode.commands.executeCommand(
-          'turboConsoleLog.displayLogMessage',
+          'emojiConsoleLog.displayLogMessage',
           [],
         );
         // Console log message is appended to the end of the document starting with /n character

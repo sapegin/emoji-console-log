@@ -1,6 +1,6 @@
-# <span style="color:deepskyblue">**Turbo Console Log tests documentation**</span>
+# <span style="color:deepskyblue">**Emoji Console Log tests documentation**</span>
 
-This document inclues information about the tests for Turbo Console Log extension.
+This document includes information about the tests for Emoji Console Log extension.
 
 ## <span style="color:khaki">**Testing Frameworks**</span>
 
@@ -69,7 +69,7 @@ npm run test
 ```
 
 <div class="warning">
-  
+
 <span style="color:black"> **Warning ⚠️:** <span style="color:black">
 
 <span style="color:black">Running extension tests from the <u>command line</u> is currently <u style="color:darkred">**only**</u> supported if no other instance of Code is running.</span>

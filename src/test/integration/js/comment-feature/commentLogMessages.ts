@@ -28,7 +28,7 @@ export default (): void => {
       expectActiveTextEditorWithFile(activeTextEditor, 'commentLogMessages.js');
       if (activeTextEditor) {
         await vscode.commands.executeCommand(
-          'turboConsoleLog.commentAllLogMessages',
+          'emojiConsoleLog.commentAllLogMessages',
           [],
         );
         await Promise.all(

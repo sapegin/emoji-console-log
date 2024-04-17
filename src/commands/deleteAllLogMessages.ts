@@ -2,10 +2,9 @@ import * as vscode from 'vscode';
 import { DebugMessage } from '../debug-message';
 import { Command, ExtensionProperties, Message } from '../entities';
 
-// TODO: Don't delete empty lines that were there before
 export function deleteAllLogMessagesCommand(): Command {
   return {
-    name: 'turboConsoleLog.deleteAllLogMessages',
+    name: 'emojiConsoleLog.deleteAllLogMessages',
     handler: async (
       { logFunction }: ExtensionProperties,
       jsDebugMessage: DebugMessage,

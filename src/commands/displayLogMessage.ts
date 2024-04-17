@@ -1,13 +1,13 @@
 import * as vscode from 'vscode';
 import { DebugMessage } from '../debug-message';
 import { Command, ExtensionProperties } from '../entities';
-import { getFileCodeStyle, getTabSize } from '../utilities';
+import { getFileCodeStyle } from '../utilities';
 
 const debug = vscode.window.createOutputChannel('Emoji Console Log');
 
 export function displayLogMessageCommand(): Command {
   return {
-    name: 'turboConsoleLog.displayLogMessage',
+    name: 'emojiConsoleLog.displayLogMessage',
     handler: async (
       extensionProperties: ExtensionProperties,
       jsDebugMessage: DebugMessage,

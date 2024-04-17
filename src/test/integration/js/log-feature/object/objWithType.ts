@@ -34,7 +34,7 @@ export default (): void => {
           ),
         ];
         await vscode.commands.executeCommand(
-          'turboConsoleLog.displayLogMessage',
+          'emojiConsoleLog.displayLogMessage',
           [],
         );
         await Promise.all(

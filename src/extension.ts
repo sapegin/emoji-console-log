@@ -30,7 +30,7 @@ export function activate(): void {
     debugMessageLine,
   );
   const config: vscode.WorkspaceConfiguration =
-    vscode.workspace.getConfiguration('turboConsoleLog');
+    vscode.workspace.getConfiguration('emojiConsoleLog');
   const properties: ExtensionProperties = getExtensionProperties(config);
   const commands: Command[] = getAllCommands();
   for (const { name, handler } of commands) {

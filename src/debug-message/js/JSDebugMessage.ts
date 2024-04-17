@@ -535,10 +535,10 @@ export class JSDebugMessage extends DebugMessage {
     const documentNbrOfLines: number = document.lineCount;
     const logMessages: Message[] = [];
     for (let i = 0; i < documentNbrOfLines; i++) {
-      const turboConsoleLogMessage = new RegExp(
+      const emojiConsoleLogMessage = new RegExp(
         logFunction.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
       );
-      if (turboConsoleLogMessage.test(document.lineAt(i).text)) {
+      if (emojiConsoleLogMessage.test(document.lineAt(i).text)) {
         const logMessage: Message = {
           spaces: '',
           lines: [],

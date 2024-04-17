@@ -23,17 +23,17 @@
       "type": "object",
       "title": "Emoji Console Log Configuration",
       "properties": {
-        "turboConsoleLog.insertEmptyLineBeforeLogMessage": {
+        "emojiConsoleLog.insertEmptyLineBeforeLogMessage": {
           "type": "boolean",
           "default": false,
           "description": "Whether to insert an empty line before the log message."
         },
-        "turboConsoleLog.insertEmptyLineAfterLogMessage": {
+        "emojiConsoleLog.insertEmptyLineAfterLogMessage": {
           "type": "boolean",
           "default": true,
           "description": "Whether to insert an empty line after the log message."
         },
-        "turboConsoleLog.logFunction": {
+        "emojiConsoleLog.logFunction": {
           "type": "string",
           "default": "console.log",
           "description": "Function to log the values."
@@ -42,40 +42,40 @@
     },
     "commands": [
       {
-        "command": "turboConsoleLog.displayLogMessage",
-        "title": "Turbo Console Log: Display Log Message"
+        "command": "emojiConsoleLog.displayLogMessage",
+        "title": "Emoji Console Log: Add log message"
       },
       {
-        "command": "turboConsoleLog.commentAllLogMessages",
-        "title": "Turbo Console Log: Comment All Log Messages"
+        "command": "emojiConsoleLog.commentAllLogMessages",
+        "title": "Emoji Console Log: Comment all log messages"
       },
       {
-        "command": "turboConsoleLog.uncommentAllLogMessages",
-        "title": "Turbo Console Log: Uncomment All Log Messages"
+        "command": "emojiConsoleLog.uncommentAllLogMessages",
+        "title": "Emoji Console Log: Uncomment all log messages"
       },
       {
-        "command": "turboConsoleLog.deleteAllLogMessages",
-        "title": "Turbo Console Log: Delete All Log Messages"
+        "command": "emojiConsoleLog.deleteAllLogMessages",
+        "title": "Emoji Console Log: Delete all log messages"
       }
     ],
     "keybindings": [
       {
-        "command": "turboConsoleLog.displayLogMessage",
+        "command": "emojiConsoleLog.displayLogMessage",
         "key": "ctrl+alt+l",
         "mac": "ctrl+alt+l"
       },
       {
-        "command": "turboConsoleLog.commentAllLogMessages",
+        "command": "emojiConsoleLog.commentAllLogMessages",
         "key": "alt+shift+c",
         "mac": "alt+shift+c"
       },
       {
-        "command": "turboConsoleLog.uncommentAllLogMessages",
+        "command": "emojiConsoleLog.uncommentAllLogMessages",
         "key": "alt+shift+u",
         "mac": "alt+shift+u"
       },
       {
-        "command": "turboConsoleLog.deleteAllLogMessages",
+        "command": "emojiConsoleLog.deleteAllLogMessages",
         "key": "alt+shift+d",
         "mac": "alt+shift+d"
       }

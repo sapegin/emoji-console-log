@@ -4,7 +4,7 @@ import { Command, ExtensionProperties, Message } from '../entities';
 
 export function commentAllLogMessagesCommand(): Command {
   return {
-    name: 'turboConsoleLog.commentAllLogMessages',
+    name: 'emojiConsoleLog.commentAllLogMessages',
     handler: async (
       { logFunction }: ExtensionProperties,
       jsDebugMessage: DebugMessage,
