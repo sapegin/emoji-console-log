@@ -35,7 +35,7 @@ function getTab(editorOptions: TextEditorOptions) {
       return ' '.repeat(defaultTabWidth);
     }
   } else {
-    return '\t'.repeat(defaultTabWidth);
+    return '\t';
   }
 }
 
