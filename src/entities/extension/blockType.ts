@@ -1,1 +1,1 @@
-export type BlockType = "class" | "function";
+export type BlockType = 'class' | 'function';

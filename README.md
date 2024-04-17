@@ -4,9 +4,9 @@ Visual Studio Code extension to insert `console.log()` statement with a random e
 
 This is a fork of the [Turbo Console Log](https://www.turboconsolelog.io) extension. The main differences are:
 
-* Significantly simpler and doesn’t come with a lot of options, doesn’t add class name, file name, line number, etc, only the variable name.
-* Adds random emoji to each log
-* [WIP] Automatically detects the project’s code style settings (quotes, semicolons, etc.).
+- Significantly simpler and doesn’t come with a lot of options, doesn’t add class name, file name, line number, etc, only the variable name.
+- Adds random emoji to each log
+- [WIP] Automatically detects the project’s code style settings (quotes, semicolons, etc.).
 
 ## Features
 
@@ -38,15 +38,15 @@ Press **Shift+Alt+D** (Windows) or **Shift+Option+D** (Mac).
 
 You can change the following options in the Code preferences:
 
-| Description  | Setting                         | Default     |
-| ------------ | ------------------------------- | ----------- |
+| Description | Setting | Default |
+| --- | --- | --- |
 | Log function to use in the inserted log message | `logFunction` | `console.log` |
 | Whether to insert an empty line before the log message | `insertEmptyLineBeforeLogMessage` | false |
 | Whether to insert an empty line after the log message | `insertEmptyLineAfterLogMessage` | true |
 
 ## Motivation
 
-Using `console.log()` is my favorite way of debugging JavaScript and TypeScript code. I’ve been trying to learn more fancy techniques, like a debugger, but I always come back to `console.log()`, because it’s the simplest and it works for me. 
+Using `console.log()` is my favorite way of debugging JavaScript and TypeScript code. I’ve been trying to learn more fancy techniques, like a debugger, but I always come back to `console.log()`, because it’s the simplest and it works for me.
 
 The way I do it is by adding a separate log for each variable I want to track, like so: `console.log('🍕 variable', variable)`. I always add a different emoji at the beginning, so it’s easy to differentiate logs in the browser console.
 
@@ -70,7 +70,6 @@ Bug fixes are welcome, but not new features. Please take a moment to review the 
 
 [Artem Sapegin](https://sapegin.me), and [contributors](https://github.com/sapegin/emoji-console-log/graphs/contributors).
 
-This extension is based on [Turbo Console Log](https://github.com/Chakroun-Anas/turbo-console-log) by [
-Chakroun Anas](https://github.com/Chakroun-Anas) and its [contributors](https://github.com/Chakroun-Anas/turbo-console-log/graphs/contributors).
+This extension is based on [Turbo Console Log](https://github.com/Chakroun-Anas/turbo-console-log) by [ Chakroun Anas](https://github.com/Chakroun-Anas) and its [contributors](https://github.com/Chakroun-Anas/turbo-console-log/graphs/contributors).
 
 MIT License, see the included [License.md](License.md) file.

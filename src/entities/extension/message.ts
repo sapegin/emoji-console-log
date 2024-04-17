@@ -1,4 +1,4 @@
-import { Range } from "vscode";
+import { Range } from 'vscode';
 
 export type Message = {
   spaces: string;

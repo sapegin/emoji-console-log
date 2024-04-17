@@ -139,7 +139,6 @@ export class JSDebugMessage extends DebugMessage {
           logMsgLine === document.lineCount ? '\n' : ''
         }${spacesBeforeMsg}${debuggingMsg}\n${spacesBeforeMsg}}\n`,
       );
-      return;
     }
   }
   private deepObjectProperty(

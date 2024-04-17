@@ -8,6 +8,18 @@ import { getAllCommands } from './commands/';
 import { DebugMessageLine } from './debug-message/DebugMessageLine';
 import { JSDebugMessageLine } from './debug-message/js/JSDebugMessageLine';
 
+function getExtensionProperties(
+  workspaceConfig: vscode.WorkspaceConfiguration,
+) {
+  return {
+    insertEmptyLineBeforeLogMessage:
+      workspaceConfig.insertEmptyLineBeforeLogMessage ?? false,
+    insertEmptyLineAfterLogMessage:
+      workspaceConfig.insertEmptyLineAfterLogMessage ?? false,
+    logFunction: workspaceConfig.logFunction ?? 'console.log',
+  };
+}
+
 export function activate(): void {
   const jsLineCodeProcessing: LineCodeProcessing = new JSLineCodeProcessing();
   const debugMessageLine: DebugMessageLine = new JSDebugMessageLine(
@@ -20,22 +32,10 @@ export function activate(): void {
   const config: vscode.WorkspaceConfiguration =
     vscode.workspace.getConfiguration('turboConsoleLog');
   const properties: ExtensionProperties = getExtensionProperties(config);
-  const commands: Array<Command> = getAllCommands();
+  const commands: Command[] = getAllCommands();
   for (const { name, handler } of commands) {
     vscode.commands.registerCommand(name, (args: unknown[]) => {
       handler(properties, jsDebugMessage, args);
     });
   }
-}
-
-function getExtensionProperties(
-  workspaceConfig: vscode.WorkspaceConfiguration,
-) {
-  return {
-    insertEmptyLineBeforeLogMessage:
-      workspaceConfig.insertEmptyLineBeforeLogMessage ?? false,
-    insertEmptyLineAfterLogMessage:
-      workspaceConfig.insertEmptyLineAfterLogMessage ?? false,
-    logFunction: workspaceConfig.logFunction ?? 'console.log',
-  };
 }

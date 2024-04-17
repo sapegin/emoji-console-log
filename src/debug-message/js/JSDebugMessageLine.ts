@@ -84,9 +84,9 @@ export class JSDebugMessageLine implements DebugMessageLine {
       .length;
     let currentLineNum: number = selectionLine + 1;
     while (currentLineNum < document.lineCount) {
-      const currentLineText: string = document.lineAt(currentLineNum).text;
-      nbrOfOpenedBrackets += (currentLineText.match(/{/g) || []).length;
-      nbrOfClosedBrackets += (currentLineText.match(/}/g) || []).length;
+      const line = document.lineAt(currentLineNum).text;
+      nbrOfOpenedBrackets += (line.match(/{/g) || []).length;
+      nbrOfClosedBrackets += (line.match(/}/g) || []).length;
       currentLineNum++;
       if (nbrOfOpenedBrackets === nbrOfClosedBrackets) {
         break;
@@ -172,13 +172,12 @@ export class JSDebugMessageLine implements DebugMessageLine {
     }
     let totalOpenedParenthesis = 0;
     let totalClosedParenthesis = 0;
-    const { openedElementOccurrences, closedElementOccurrences } =
-      this.locOpenedClosedElementOccurrences(
-        currentLineText,
-        BracketType.PARENTHESIS,
-      );
-    totalOpenedParenthesis += openedElementOccurrences;
-    totalClosedParenthesis += closedElementOccurrences;
+    const occurrences = this.locOpenedClosedElementOccurrences(
+      currentLineText,
+      BracketType.PARENTHESIS,
+    );
+    totalOpenedParenthesis += occurrences.openedElementOccurrences;
+    totalClosedParenthesis += occurrences.closedElementOccurrences;
     let currentLineNum = selectionLine + 1;
     if (
       totalOpenedParenthesis !== totalClosedParenthesis ||
@@ -187,13 +186,12 @@ export class JSDebugMessageLine implements DebugMessageLine {
     ) {
       while (currentLineNum < document.lineCount) {
         currentLineText = document.lineAt(currentLineNum).text;
-        const { openedElementOccurrences, closedElementOccurrences } =
-          this.locOpenedClosedElementOccurrences(
-            currentLineText,
-            BracketType.PARENTHESIS,
-          );
-        totalOpenedParenthesis += openedElementOccurrences;
-        totalClosedParenthesis += closedElementOccurrences;
+        const lineOccurrences = this.locOpenedClosedElementOccurrences(
+          currentLineText,
+          BracketType.PARENTHESIS,
+        );
+        totalOpenedParenthesis += lineOccurrences.openedElementOccurrences;
+        totalClosedParenthesis += lineOccurrences.closedElementOccurrences;
         if (currentLineNum === document.lineCount - 1) {
           break;
         }
@@ -221,9 +219,9 @@ export class JSDebugMessageLine implements DebugMessageLine {
     let currentLineNum: number = selectionLine + 1;
     if (nbrOfOpenedBrackets !== nbrOfClosedBrackets) {
       while (currentLineNum < document.lineCount) {
-        const currentLineText: string = document.lineAt(currentLineNum).text;
-        nbrOfOpenedBrackets += (currentLineText.match(/\[/g) || []).length;
-        nbrOfClosedBrackets += (currentLineText.match(/\]/g) || []).length;
+        const line = document.lineAt(currentLineNum).text;
+        nbrOfOpenedBrackets += (line.match(/\[/g) || []).length;
+        nbrOfClosedBrackets += (line.match(/\]/g) || []).length;
         currentLineNum++;
         if (nbrOfOpenedBrackets === nbrOfClosedBrackets) {
           break;
@@ -242,8 +240,8 @@ export class JSDebugMessageLine implements DebugMessageLine {
     let currentLineNum: number = selectionLine + 1;
     let nbrOfBackticks: number = (currentLineText.match(/`/g) || []).length;
     while (currentLineNum < document.lineCount) {
-      const currentLineText: string = document.lineAt(currentLineNum).text;
-      nbrOfBackticks += (currentLineText.match(/`/g) || []).length;
+      const line = document.lineAt(currentLineNum).text;
+      nbrOfBackticks += (line.match(/`/g) || []).length;
       if (nbrOfBackticks % 2 === 0) {
         break;
       }

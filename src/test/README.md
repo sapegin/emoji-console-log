@@ -4,8 +4,7 @@ This document inclues information about the tests for Turbo Console Log extensio
 
 ## <span style="color:khaki">**Testing Frameworks**</span>
 
-- <span style="color:deepskyblue">Mocha</span>
-  : A flexible and widely-used testing framework that provides a simple and customizable test runner. It supports a variety of testing styles, including BDD (Behavior-Driven Development), TDD (Test-Driven Development), and more. Mocha allows developers to write asynchronous tests, and provides features such as hooks, timeouts, and reporters to customize the testing process. (https://mochajs.org/)
+- <span style="color:deepskyblue">Mocha</span> : A flexible and widely-used testing framework that provides a simple and customizable test runner. It supports a variety of testing styles, including BDD (Behavior-Driven Development), TDD (Test-Driven Development), and more. Mocha allows developers to write asynchronous tests, and provides features such as hooks, timeouts, and reporters to customize the testing process. (https://mochajs.org/)
 
 - <span style="color:deepskyblue">Chai</span>: An assertion library that can be used in conjunction with Mocha (or other testing frameworks) to provide a more expressive and readable syntax for writing tests. Chai provides several assertion styles, including BDD-style "expect" and "should" syntax, as well as a classic "assert" style. It also supports chaining and negation for complex assertions, and can be extended with plugins to provide additional functionality. (https://www.chaijs.com/)
 
