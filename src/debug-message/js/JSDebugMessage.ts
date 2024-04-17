@@ -15,6 +15,8 @@ import { DebugMessageLine } from '../DebugMessageLine';
 import {
   getMultiLineContextVariable,
   closingContextLine,
+  getRandomEmoji,
+  emojis,
 } from '../../utilities';
 import { JSDebugMessageAnonymous } from './JSDebugMessageAnonymous';
 import {
@@ -91,80 +93,32 @@ export class JSDebugMessage extends DebugMessage {
     return false;
   }
   private constructDebuggingMsg(
-    extensionProperties: ExtensionProperties,
     debuggingMsgContent: string,
     spacesBeforeMsg: string,
   ): string {
-    const wrappingMsg = `console.${extensionProperties.logType}(${
-      extensionProperties.quote
-    }${extensionProperties.logMessagePrefix} ${'-'.repeat(
-      debuggingMsgContent.length - 16,
-    )}${extensionProperties.logMessagePrefix}${extensionProperties.quote})${
-      extensionProperties.addSemicolonInTheEnd ? ';' : ''
-    }`;
-    const debuggingMsg: string = extensionProperties.wrapLogMessage
-      ? `${spacesBeforeMsg}${wrappingMsg}\n${spacesBeforeMsg}${debuggingMsgContent}\n${spacesBeforeMsg}${wrappingMsg}`
-      : `${spacesBeforeMsg}${debuggingMsgContent}`;
-    return debuggingMsg;
+    return `${spacesBeforeMsg}${debuggingMsgContent}`;
   }
   private constructDebuggingMsgContent(
-    document: TextDocument,
     selectedVar: string,
-    lineOfSelectedVar: number,
-    lineOfLogMsg: number,
     extensionProperties: Omit<
       ExtensionProperties,
       'wrapLogMessage' | 'insertEmptyLineAfterLogMessage'
     >,
   ): string {
-    const fileName = document.fileName.includes('/')
-      ? document.fileName.split('/')[document.fileName.split('/').length - 1]
-      : document.fileName.split('\\')[document.fileName.split('\\').length - 1];
-    const funcThatEncloseTheVar: string = this.enclosingBlockName(
-      document,
-      lineOfSelectedVar,
-      'function',
-    );
-    const classThatEncloseTheVar: string = this.enclosingBlockName(
-      document,
-      lineOfSelectedVar,
-      'class',
-    );
-    const semicolon: string = extensionProperties.addSemicolonInTheEnd
-      ? ';'
-      : '';
-    return `${
-      extensionProperties.logFunction !== 'log'
-        ? extensionProperties.logFunction
-        : `console.${extensionProperties.logType}`
-    }(${extensionProperties.quote}${extensionProperties.logMessagePrefix}${
-      extensionProperties.logMessagePrefix.length !== 0 &&
-      extensionProperties.logMessagePrefix !==
-        `${extensionProperties.delimiterInsideMessage} `
-        ? ` ${extensionProperties.delimiterInsideMessage} `
-        : ''
-    }${
-      extensionProperties.includeFileNameAndLineNum
-        ? `file: ${fileName}:${
-            lineOfLogMsg +
-            (extensionProperties.insertEmptyLineBeforeLogMessage ? 2 : 1)
-          } ${extensionProperties.delimiterInsideMessage} `
-        : ''
-    }${
-      extensionProperties.insertEnclosingClass
-        ? classThatEncloseTheVar.length > 0
-          ? `${classThatEncloseTheVar} ${extensionProperties.delimiterInsideMessage} `
-          : ``
-        : ''
-    }${
-      extensionProperties.insertEnclosingFunction
-        ? funcThatEncloseTheVar.length > 0
-          ? `${funcThatEncloseTheVar} ${extensionProperties.delimiterInsideMessage} `
-          : ''
-        : ''
-    }${selectedVar}${extensionProperties.logMessageSuffix}${
-      extensionProperties.quote
-    }, ${selectedVar})${semicolon}`;
+    // TODO: Use Prettier config for quote type
+    const quote = "'";
+
+    // TODO: Use Prettier config for semicolon insertion
+    const semicolon = ';';
+
+    const logFunction =
+      extensionProperties.logFunction === 'log'
+        ? `console.${extensionProperties.logType}`
+        : extensionProperties.logFunction;
+
+    const emoji = getRandomEmoji();
+
+    return `${logFunction}(${quote}${emoji} ${selectedVar}${quote}, ${selectedVar})${semicolon}`;
   }
 
   private emptyBlockDebuggingMsg(
@@ -252,19 +206,15 @@ export class JSDebugMessage extends DebugMessage {
       lineOfLogMsg,
     );
     const debuggingMsgContent: string = this.constructDebuggingMsgContent(
-      document,
       (logMsg.metadata as LogContextMetadata)?.deepObjectPath
         ? (logMsg.metadata as LogContextMetadata)?.deepObjectPath
         : selectedVar,
-      lineOfSelectedVar,
-      lineOfLogMsg,
       omit(extensionProperties, [
         'wrapLogMessage',
         'insertEmptyLineAfterLogMessage',
       ]),
     );
     const debuggingMsg: string = this.constructDebuggingMsg(
-      extensionProperties,
       debuggingMsgContent,
       spacesBeforeMsg,
     );
@@ -619,12 +569,7 @@ export class JSDebugMessage extends DebugMessage {
     }
     return '';
   }
-  detectAll(
-    document: TextDocument,
-    logFunction: string,
-    logMessagePrefix: string,
-    delimiterInsideMessage: string,
-  ): Message[] {
+  detectAll(document: TextDocument, logFunction: string): Message[] {
     const documentNbrOfLines: number = document.lineCount;
     const logMessages: Message[] = [];
     for (let i = 0; i < documentNbrOfLines; i++) {
@@ -647,10 +592,7 @@ export class JSDebugMessage extends DebugMessage {
           msg += document.lineAt(j).text;
           logMessage.lines.push(document.lineAt(j).rangeIncludingLineBreak);
         }
-        if (
-          new RegExp(logMessagePrefix).test(msg) ||
-          new RegExp(delimiterInsideMessage).test(msg)
-        ) {
+        if (new RegExp(emojis.join('|')).test(msg)) {
           logMessages.push(logMessage);
         }
       }

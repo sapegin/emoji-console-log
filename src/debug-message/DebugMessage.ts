@@ -31,12 +31,7 @@ export abstract class DebugMessage {
     tabSize: number,
     extensionProperties: ExtensionProperties,
   ): void;
-  abstract detectAll(
-    document: TextDocument,
-    logFunction: string,
-    logMessagePrefix: string,
-    delimiterInsideMessage: string,
-  ): Message[];
+  abstract detectAll(document: TextDocument, logFunction: string): Message[];
   abstract enclosingBlockName(
     document: TextDocument,
     lineOfSelectedVar: number,

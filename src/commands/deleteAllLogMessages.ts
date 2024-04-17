@@ -2,15 +2,12 @@ import * as vscode from 'vscode';
 import { DebugMessage } from '../debug-message';
 import { Command, ExtensionProperties, Message } from '../entities';
 
+// TODO: Don't delete empty lines that were there before
 export function deleteAllLogMessagesCommand(): Command {
   return {
     name: 'turboConsoleLog.deleteAllLogMessages',
     handler: async (
-      {
-        delimiterInsideMessage,
-        logMessagePrefix,
-        logFunction,
-      }: ExtensionProperties,
+      { logFunction }: ExtensionProperties,
       jsDebugMessage: DebugMessage,
     ) => {
       const editor: vscode.TextEditor | undefined =
@@ -22,8 +19,6 @@ export function deleteAllLogMessagesCommand(): Command {
       const logMessages: Message[] = jsDebugMessage.detectAll(
         document,
         logFunction,
-        logMessagePrefix,
-        delimiterInsideMessage,
       );
       editor.edit((editBuilder) => {
         logMessages.forEach(({ lines }) => {

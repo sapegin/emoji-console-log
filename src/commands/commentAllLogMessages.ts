@@ -6,11 +6,7 @@ export function commentAllLogMessagesCommand(): Command {
   return {
     name: 'turboConsoleLog.commentAllLogMessages',
     handler: async (
-      {
-        delimiterInsideMessage,
-        logMessagePrefix,
-        logFunction,
-      }: ExtensionProperties,
+      { logFunction }: ExtensionProperties,
       jsDebugMessage: DebugMessage,
       args?: unknown[],
     ) => {
@@ -42,8 +38,6 @@ export function commentAllLogMessagesCommand(): Command {
       const logMessages: Message[] = jsDebugMessage.detectAll(
         document,
         logFunctionToUse(),
-        logMessagePrefix,
-        delimiterInsideMessage,
       );
       editor.edit((editBuilder) => {
         logMessages.forEach(({ spaces, lines }) => {
