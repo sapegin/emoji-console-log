@@ -76,7 +76,7 @@
         "title": "Emoji Console Log: Uncomment all log messages"
       },
       {
-        "command": "emojiConsoleLog.deleteAllLogMessages",
+        "command": "emojiConsoleLog.removeAllLogMessages",
         "title": "Emoji Console Log: Delete all log messages"
       }
     ],
@@ -97,7 +97,7 @@
         "mac": "shift+alt+u"
       },
       {
-        "command": "emojiConsoleLog.deleteAllLogMessages",
+        "command": "emojiConsoleLog.removeAllLogMessages",
         "key": "shift+alt+d",
         "mac": "shift+alt+d"
       }

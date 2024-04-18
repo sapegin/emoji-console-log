@@ -2,9 +2,9 @@ import * as vscode from 'vscode';
 import { DebugMessage } from '../debug-message';
 import { Command, ExtensionProperties, Message } from '../entities';
 
-export function deleteAllLogMessagesCommand(): Command {
+export function removeAllLogMessagesCommand(): Command {
   return {
-    name: 'emojiConsoleLog.deleteAllLogMessages',
+    name: 'emojiConsoleLog.removeAllLogMessages',
     handler: async (
       { logFunction }: ExtensionProperties,
       jsDebugMessage: DebugMessage,
