@@ -1,6 +1,14 @@
+import { basename, dirname } from 'path';
+import { readFileSync } from 'fs';
 import _ from 'lodash';
-import { getSupportInfo, Options, resolveConfig } from 'prettier';
+import { findUp } from 'find-up';
 import { TextEditorOptions, window } from 'vscode';
+
+// We can't use Prettier directly since extensions don't allow dynamic imports:
+// https://github.com/prettier/prettier-vscode/pull/3016
+// Instead we find and read Prettier config file manually.
+// We only support JSON and JavaScript configs
+// https://prettier.io/docs/en/configuration
 
 const debug = window.createOutputChannel('Emoji Console Log');
 
@@ -11,23 +19,118 @@ export interface CodeStyle {
 }
 
 const defaultTabWidth = 2;
+const defaultSemicolon = true;
+const defaultSingleQuote = false;
 
-async function getPrettierDefaultOption<T>(optionName: string) {
-  const info = await getSupportInfo();
-  return info.options.find(({ name }) => name === optionName)?.default as
-    | T
-    | undefined;
+async function readPrettierConfigJavaScript(filepath: string) {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const config = require(filepath);
+
+    debug.appendLine(`Prettier config:`);
+    debug.appendLine(JSON.stringify(config));
+
+    return config;
+  } catch (err) {
+    debug.appendLine(`Cannot read Prettier config from ${filepath}:`);
+    if (err instanceof Error) {
+      debug.appendLine(err.message);
+    }
+    return {};
+  }
 }
 
-async function resolvePrettierOption<T>(
-  optionName: string,
-  fileConfig: Options | null,
-) {
-  if (fileConfig?.[optionName]) {
-    return fileConfig?.[optionName] as T;
+async function readPrettierConfigJson(filepath: string) {
+  try {
+    const config = JSON.parse(readFileSync(filepath, 'utf8'));
+
+    debug.appendLine(`Prettier config:`);
+    debug.appendLine(JSON.stringify(config));
+
+    return config;
+  } catch (err) {
+    debug.appendLine(`Cannot read Prettier config from ${filepath}:`);
+    if (err instanceof Error) {
+      debug.appendLine(err.message);
+    }
+    return {};
+  }
+}
+
+async function readPrettierConfigPackage(filepath: string) {
+  try {
+    const packageJson = JSON.parse(readFileSync(filepath, 'utf8'));
+
+    if (packageJson.prettier) {
+      debug.appendLine(`Prettier config:`);
+      debug.appendLine(JSON.stringify(packageJson.prettier));
+
+      return packageJson.prettier;
+    } else {
+      return {};
+    }
+  } catch (err) {
+    debug.appendLine(`Cannot read Prettier config from ${filepath}:`);
+    if (err instanceof Error) {
+      debug.appendLine(err.message);
+    }
+    return {};
+  }
+}
+
+async function getPrettierConfig(filepath: string) {
+  const filename = basename(filepath);
+  switch (filename) {
+    // JSON
+    case '.prettierrc':
+    case '.prettierrc.json':
+      return readPrettierConfigJson(filepath);
+
+    // JavaScript
+    default:
+      return readPrettierConfigJavaScript(filepath);
+  }
+}
+
+async function resolvePrettierConfig(filepath: string) {
+  const cwd = dirname(filepath);
+
+  // Try to find Prettier config
+  const configFile = await findUp(
+    [
+      '.prettierrc',
+      '.prettierrc.json',
+      '.prettierrc.js',
+      'prettier.config.js',
+      '.prettierrc.mjs',
+      'prettier.config.mjs',
+      '.prettierrc.cjs',
+      'prettier.config.cjs',
+    ],
+    {
+      cwd,
+    },
+  );
+
+  if (configFile) {
+    debug.appendLine(`Prettier config file for ${filepath}:`);
+    debug.appendLine(`${configFile}`);
+
+    // Try to read config file
+    return getPrettierConfig(configFile);
   }
 
-  return getPrettierDefaultOption<T>(optionName);
+  // Try to read configuration from package.json if no config file present
+  const packageFile = await findUp('package.json', {
+    cwd,
+  });
+
+  if (packageFile) {
+    debug.appendLine(`Package.json for ${filepath}:`);
+    debug.appendLine(`${packageFile}`);
+
+    return readPrettierConfigPackage(packageFile);
+  }
 }
 
 function getTab(editorOptions: TextEditorOptions) {
@@ -46,20 +149,14 @@ async function getFileCodeStyleRaw(
   filepath: string,
   editorOptions: TextEditorOptions,
 ): Promise<CodeStyle> {
-  const fileConfig = await resolveConfig(filepath);
-  const prettierSingleQuote = await resolvePrettierOption<boolean>(
-    'singleQuote',
-    fileConfig,
-  );
-  const prettierSemicolon = await resolvePrettierOption<boolean>(
-    'semi',
-    fileConfig,
-  );
+  const fileConfig = await resolvePrettierConfig(filepath);
+  const useSingleQuote = fileConfig?.singleQuote ?? defaultSingleQuote;
+  const useSemicolon = fileConfig?.semi ?? defaultSemicolon;
 
   const style: CodeStyle = {
     tab: getTab(editorOptions),
-    quote: prettierSingleQuote ? "'" : '"',
-    semicolon: prettierSemicolon ? ';' : '',
+    quote: useSingleQuote ? "'" : '"',
+    semicolon: useSemicolon ? ';' : '',
   };
 
   debug.appendLine(`Detected code style for ${filepath}:`);
