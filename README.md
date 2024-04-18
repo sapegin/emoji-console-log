@@ -67,8 +67,9 @@ I wanted the easiest way to manage such logs so I found the [Turbo Console Log](
 The main differences with Turbo Console Log are:
 
 - Significantly simpler and doesn’t come with a lot of options, doesn’t add class name, file name, line number, etc, only the variable name.
-- Adds random emoji to each log
+- Adds random non-repeating emoji to each log
 - Automatically detects project’s code style (quotes, semicolons, tabs/spaces, etc.).
+- Automagically add new lines at the right places.
 
 ## Changelog
 
