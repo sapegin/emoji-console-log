@@ -2,7 +2,7 @@
   "name": "emoji-console-log",
   "displayName": "Emoji Console Log",
   "description": "Inserts console.log() statements with a random emoji",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "publisher": "sapegin",
   "engines": {
     "vscode": "^1.50.0"
