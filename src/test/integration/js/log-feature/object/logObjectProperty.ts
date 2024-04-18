@@ -31,8 +31,8 @@ export default (): void => {
       if (activeTextEditor) {
         activeTextEditor.selections = [
           new vscode.Selection(
-            new NaturalEditorPosition(3, 5),
-            new NaturalEditorPosition(3, 8),
+            new NaturalEditorPosition(3, 3),
+            new NaturalEditorPosition(3, 6),
           ),
         ];
         await vscode.commands.executeCommand(
@@ -57,8 +57,8 @@ export default (): void => {
       if (activeTextEditor) {
         activeTextEditor.selections = [
           new vscode.Selection(
-            new NaturalEditorPosition(5, 9),
-            new NaturalEditorPosition(5, 15),
+            new NaturalEditorPosition(5, 7),
+            new NaturalEditorPosition(5, 13),
           ),
         ];
         await vscode.commands.executeCommand(
@@ -83,8 +83,8 @@ export default (): void => {
       if (activeTextEditor) {
         activeTextEditor.selections = [
           new vscode.Selection(
-            new NaturalEditorPosition(6, 13),
-            new NaturalEditorPosition(6, 22),
+            new NaturalEditorPosition(6, 11),
+            new NaturalEditorPosition(6, 19),
           ),
         ];
         await vscode.commands.executeCommand(

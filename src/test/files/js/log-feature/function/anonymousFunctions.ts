@@ -9,7 +9,7 @@ fundsCalls
     .map((item, index) => ({ ...item, index }));
 
 Promise.all(
-  budgets.map((budget) => 
+  budgets.map((budget) =>
     checkAccountingPeriodDivide(budget._id, accountingPeriodId))
 ).then((checkedBudgets) => {
   this.setState({ checkedBudgets });
@@ -24,7 +24,7 @@ Promise.all(
 })
 
 Promise.all(
-    budgets.map((budget) => 
+    budgets.map((budget) =>
       checkAccountingPeriodDivide(budget._id, accountingPeriodId)
     )
 ).then((checkedBudgets) => {
@@ -32,7 +32,7 @@ Promise.all(
 })
 
 Promise.all(
-    budgets.map((budget) => 
+    budgets.map((budget) =>
         checkAccountingPeriodDivide(budget._id)
         .checkAccountingPeriodDivide(budget._id, accountingPeriodId)
     )

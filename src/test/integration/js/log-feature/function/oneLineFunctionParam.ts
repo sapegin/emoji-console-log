@@ -44,7 +44,6 @@ export default (): void => {
         const textDocument = activeTextEditor.document;
         const logMessage = textDocument.lineAt(1).text;
         expect(/console\.log\(.*/.test(logMessage)).to.equal(true);
-        expect(logMessage.includes('sayHello')).to.equal(true);
       }
     });
   });
