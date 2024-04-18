@@ -2,19 +2,21 @@
 
 Visual Studio Code extension to insert `console.log()` statement with a random emoji and a variable (object, function, etc.) under your cursor to make debugging JavaScript and TypeScript code easier.
 
-This is a fork of the [Turbo Console Log](https://www.turboconsolelog.io) extension. The main differences are:
+![Emoji Console Log Visual Studio Code extension](./images/emoji-console-log.png)
 
-- Significantly simpler and doesn’t come with a lot of options, doesn’t add class name, file name, line number, etc, only the variable name.
-- Adds random emoji to each log
-- [WIP] Automatically detects the project’s code style settings (quotes, semicolons, etc.).
+_This is a fork of the [Turbo Console Log](https://www.turboconsolelog.io) extension, [see more details below](#motivation)._
 
 ## Features
 
-### Insert a meaningful log message
+- Hotkeys to add, comment, uncomment, and remove logs to monitor different values.
+- Adds random emoji to each log to make it easier to distinguish different logs in the browser console.
+- Automatically detects project’s code style (quotes, semicolons, tabs/spaces, etc.).
 
-Place a cursor or select the variable that you want to log, and press **Ctrl+Alt+L** (Windows) or **Ctrl+Option+L** (Mac).
+This extension adds four commands to your Visual Studio Code:
 
-The log message will be inserted in the next line relative to the selected variable like so:
+### Insert a log message
+
+Place a cursor or select a variable that you want to log, and press **Ctrl+Alt+L** (Windows) or **Ctrl+Option+L** (Mac). A log message will be inserted in the next line relative to the selected variable like so:
 
 ```js
 console.log('🦆 variable', variable);
@@ -36,13 +38,22 @@ Press **Shift+Alt+D** (Windows) or **Shift+Option+D** (Mac).
 
 ## Settings
 
-You can change the following options in the Code preferences:
+You can change the following options in the [Visual Studio Code setting](https://code.visualstudio.com/docs/getstarted/settings):
 
 | Description | Setting | Default |
 | --- | --- | --- |
-| Log function to use in the inserted log message | `logFunction` | `console.log` |
-| Whether to insert an empty line before the log message | `insertEmptyLineBeforeLogMessage` | false |
-| Whether to insert an empty line after the log message | `insertEmptyLineAfterLogMessage` | true |
+| Log function to use in the inserted log message | `emojiConsoleLog.logFunction` | `console.log` |
+| Whether to insert an empty line before the log message | `emojiConsoleLog.insertEmptyLineBeforeLogMessage` | false |
+| Whether to insert an empty line after the log message | `emojiConsoleLog.insertEmptyLineAfterLogMessage` | true |
+
+You can also [redefine the key bindings](https://code.visualstudio.com/docs/getstarted/keybindings):
+
+| Description | Name | Default Win | Default Mac |
+| --- | --- | --- | --- |
+| Insert a log message | `emojiConsoleLog.displayLogMessage` | Ctrl+Alt+L | Cmd+Option+L |
+| Comment all log messages | `emojiConsoleLog.commentAllLogMessages` | Shift+Alt+C | Shift+Option+C |
+| Uncomment all log messages | `emojiConsoleLog.uncommentAllLogMessages` | Shift+Alt+U | Shift+Option+U |
+| Delete all log messages | `emojiConsoleLog.deleteAllLogMessages` | Shift+Alt+D | Shift+Option+D |
 
 ## Motivation
 
@@ -51,6 +62,12 @@ Using `console.log()` is my favorite way of debugging JavaScript and TypeScript 
 The way I do it is by adding a separate log for each variable I want to track, like so: `console.log('🍕 variable', variable)`. I always add a different emoji at the beginning, so it’s easy to differentiate logs in the browser console.
 
 I wanted the easiest way to manage such logs so I found the [Turbo Console Log](https://www.turboconsolelog.io) extension that does most of what I wanted but not in a way I’d like. I decided to make a fork instead of contributing more options to the original extension because I felt my vision would be very different from the vision of the original extension.
+
+The main differences with Turbo Console Log are:
+
+- Significantly simpler and doesn’t come with a lot of options, doesn’t add class name, file name, line number, etc, only the variable name.
+- Adds random emoji to each log
+- Automatically detects project’s code style (quotes, semicolons, tabs/spaces, etc.).
 
 ## Changelog
 

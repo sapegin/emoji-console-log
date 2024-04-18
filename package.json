@@ -88,18 +88,18 @@
       },
       {
         "command": "emojiConsoleLog.commentAllLogMessages",
-        "key": "alt+shift+c",
-        "mac": "alt+shift+c"
+        "key": "shift+alt+c",
+        "mac": "shift+alt+c"
       },
       {
         "command": "emojiConsoleLog.uncommentAllLogMessages",
-        "key": "alt+shift+u",
-        "mac": "alt+shift+u"
+        "key": "shift+alt+u",
+        "mac": "shift+alt+u"
       },
       {
         "command": "emojiConsoleLog.deleteAllLogMessages",
-        "key": "alt+shift+d",
-        "mac": "alt+shift+d"
+        "key": "shift+alt+d",
+        "mac": "shift+alt+d"
       }
     ]
   },
