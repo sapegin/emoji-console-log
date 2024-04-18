@@ -16,7 +16,7 @@ This extension adds four commands to your Visual Studio Code:
 
 ### Insert a log message
 
-Place a cursor or select a variable that you want to log, and press **Ctrl+Alt+L** (Windows) or **Ctrl+Option+L** (Mac). A log message will be inserted in the next line relative to the selected variable like so:
+Place a cursor or select a variable that you want to log, and press **Shift+Alt+L** (Windows) or **Shift+Option+L** (Mac). A log message will be inserted in the next line relative to the selected variable like so:
 
 ```js
 console.log('🦆 variable', variable);
@@ -50,7 +50,7 @@ You can also [redefine the key bindings](https://code.visualstudio.com/docs/gets
 
 | Description | Name | Default Win | Default Mac |
 | --- | --- | --- | --- |
-| Insert a log message | `emojiConsoleLog.addLogMessage` | Ctrl+Alt+L | Cmd+Option+L |
+| Insert a log message | `emojiConsoleLog.addLogMessage` | Shift+Alt+L | Shift+Option+L |
 | Comment all log messages | `emojiConsoleLog.commentAllLogMessages` | Shift+Alt+C | Shift+Option+C |
 | Uncomment all log messages | `emojiConsoleLog.uncommentAllLogMessages` | Shift+Alt+U | Shift+Option+U |
 | Delete all log messages | `emojiConsoleLog.removeAllLogMessages` | Shift+Alt+D | Shift+Option+D |

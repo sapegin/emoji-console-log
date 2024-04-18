@@ -83,8 +83,8 @@
     "keybindings": [
       {
         "command": "emojiConsoleLog.addLogMessage",
-        "key": "ctrl+alt+l",
-        "mac": "ctrl+alt+l"
+        "key": "shift+alt+l",
+        "mac": "shift+alt+l"
       },
       {
         "command": "emojiConsoleLog.commentAllLogMessages",
