@@ -50,7 +50,7 @@ You can also [redefine the key bindings](https://code.visualstudio.com/docs/gets
 
 | Description | Name | Default Win | Default Mac |
 | --- | --- | --- | --- |
-| Insert a log message | `emojiConsoleLog.displayLogMessage` | Ctrl+Alt+L | Cmd+Option+L |
+| Insert a log message | `emojiConsoleLog.addLogMessage` | Ctrl+Alt+L | Cmd+Option+L |
 | Comment all log messages | `emojiConsoleLog.commentAllLogMessages` | Shift+Alt+C | Shift+Option+C |
 | Uncomment all log messages | `emojiConsoleLog.uncommentAllLogMessages` | Shift+Alt+U | Shift+Option+U |
 | Delete all log messages | `emojiConsoleLog.deleteAllLogMessages` | Shift+Alt+D | Shift+Option+D |

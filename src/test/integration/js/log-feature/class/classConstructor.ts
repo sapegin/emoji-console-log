@@ -33,7 +33,7 @@ export default (): void => {
           ),
         ];
         await vscode.commands.executeCommand(
-          'emojiConsoleLog.displayLogMessage',
+          'emojiConsoleLog.addLogMessage',
           [],
         );
         await Promise.all(documentLinesChanged(activeTextEditor.document, [2]));

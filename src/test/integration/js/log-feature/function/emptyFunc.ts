@@ -36,7 +36,7 @@ export default (): void => {
           ),
         ];
         await vscode.commands.executeCommand(
-          'emojiConsoleLog.displayLogMessage',
+          'emojiConsoleLog.addLogMessage',
           [],
         );
         await Promise.all(
@@ -63,7 +63,7 @@ export default (): void => {
           ),
         ];
         await vscode.commands.executeCommand(
-          'emojiConsoleLog.displayLogMessage',
+          'emojiConsoleLog.addLogMessage',
           [],
         );
         await Promise.all(

@@ -64,7 +64,7 @@
     },
     "commands": [
       {
-        "command": "emojiConsoleLog.displayLogMessage",
+        "command": "emojiConsoleLog.addLogMessage",
         "title": "Emoji Console Log: Add log message"
       },
       {
@@ -82,7 +82,7 @@
     ],
     "keybindings": [
       {
-        "command": "emojiConsoleLog.displayLogMessage",
+        "command": "emojiConsoleLog.addLogMessage",
         "key": "ctrl+alt+l",
         "mac": "ctrl+alt+l"
       },

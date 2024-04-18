@@ -3,9 +3,9 @@ import { DebugMessage } from '../debug-message';
 import { Command, ExtensionProperties } from '../entities';
 import { getFileCodeStyle } from '../utilities';
 
-export function displayLogMessageCommand(): Command {
+export function addLogMessageCommand(): Command {
   return {
-    name: 'emojiConsoleLog.displayLogMessage',
+    name: 'emojiConsoleLog.addLogMessage',
     handler: async (
       extensionProperties: ExtensionProperties,
       jsDebugMessage: DebugMessage,
