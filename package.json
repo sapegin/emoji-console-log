@@ -45,16 +45,6 @@
       "type": "object",
       "title": "Emoji Console Log Configuration",
       "properties": {
-        "emojiConsoleLog.insertEmptyLineBeforeLogMessage": {
-          "type": "boolean",
-          "default": false,
-          "description": "Whether to insert an empty line before the log message."
-        },
-        "emojiConsoleLog.insertEmptyLineAfterLogMessage": {
-          "type": "boolean",
-          "default": true,
-          "description": "Whether to insert an empty line after the log message."
-        },
         "emojiConsoleLog.logFunction": {
           "type": "string",
           "default": "console.log",

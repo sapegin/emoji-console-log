@@ -61,8 +61,8 @@ export class JSDebugMessage extends DebugMessage {
     textEditor: TextEditorEdit,
     lineOfLogMsg: number,
     debuggingMsg: string,
-    insertEmptyLineBeforeLogMessage: ExtensionProperties['insertEmptyLineBeforeLogMessage'],
-    insertEmptyLineAfterLogMessage: ExtensionProperties['insertEmptyLineAfterLogMessage'],
+    insertEmptyLineBeforeLogMessage: boolean,
+    insertEmptyLineAfterLogMessage: boolean,
   ): void {
     textEditor.insert(
       new Position(
@@ -92,6 +92,20 @@ export class JSDebugMessage extends DebugMessage {
       );
     }
     return false;
+  }
+
+  /**
+   * Returns true when we're about to insert a log message on top of another
+   * log message
+   */
+  private shouldInsertEmptyLineAfterLogMessage(
+    document: TextDocument,
+    lineOfLogMsg: number,
+    logFunction: ExtensionProperties['logFunction'],
+  ) {
+    const lineUnderInsertion = document.lineAt(lineOfLogMsg);
+    const text = lineUnderInsertion.text.trimStart();
+    return text !== '' && text.startsWith(logFunction) === false;
   }
 
   private emptyBlockDebuggingMsg(
@@ -157,14 +171,10 @@ export class JSDebugMessage extends DebugMessage {
     selectedVar: string,
     lineOfSelectedVar: number,
     style: CodeStyle,
-    extensionProperties: ExtensionProperties,
+    { logFunction }: ExtensionProperties,
   ): void {
-    const logMsg: LogMessage = this.logMessage(
-      document,
-      lineOfSelectedVar,
-      selectedVar,
-    );
-    const lineOfLogMsg: number = this.line(
+    const logMsg = this.logMessage(document, lineOfSelectedVar, selectedVar);
+    const lineOfLogMsg = this.line(
       document,
       lineOfSelectedVar,
       selectedVar,
@@ -178,10 +188,19 @@ export class JSDebugMessage extends DebugMessage {
       lineOfLogMsg,
     );
 
+    const insertEmptyLineBeforeLogMessage =
+      lineOfLogMsg - lineOfSelectedVar > 1;
+    const insertEmptyLineAfterLogMessage =
+      this.shouldInsertEmptyLineAfterLogMessage(
+        document,
+        lineOfLogMsg,
+        logFunction,
+      );
+
     const varToLog =
       (logMsg.metadata as LogContextMetadata)?.deepObjectPath ?? selectedVar;
     const message = `${style.quote}${getRandomEmoji()} ${varToLog}${style.quote}`;
-    const debuggingMsgContent = `${extensionProperties.logFunction}(${message}, ${varToLog})${style.semicolon}`;
+    const debuggingMsgContent = `${logFunction}(${message}, ${varToLog})${style.semicolon}`;
     const debuggingMsg = `${spacesBeforeMsg}${debuggingMsgContent}`;
     const selectedVarLine = document.lineAt(lineOfSelectedVar);
     const selectedVarLineLoc = selectedVarLine.text;
@@ -222,8 +241,8 @@ export class JSDebugMessage extends DebugMessage {
       textEditor,
       lineOfLogMsg,
       debuggingMsg,
-      extensionProperties.insertEmptyLineBeforeLogMessage,
-      extensionProperties.insertEmptyLineAfterLogMessage,
+      insertEmptyLineBeforeLogMessage,
+      insertEmptyLineAfterLogMessage,
     );
   }
   logMessage(

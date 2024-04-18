@@ -119,7 +119,7 @@ export class JSDebugMessageAnonymous {
       );
       textEditor.insert(
         new Position(selectedPropLine.lineNumber, 0),
-        `${spacesBeforeLinesToInsert}${debuggingMsg}\n`,
+        `${spacesBeforeLinesToInsert}${debuggingMsg}\n\n`,
       );
       textEditor.insert(
         new Position(selectedPropLine.lineNumber, 0),

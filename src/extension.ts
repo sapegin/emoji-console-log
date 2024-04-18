@@ -9,10 +9,6 @@ function getExtensionProperties(
   workspaceConfig: vscode.WorkspaceConfiguration,
 ): ExtensionProperties {
   return {
-    insertEmptyLineBeforeLogMessage:
-      workspaceConfig.insertEmptyLineBeforeLogMessage ?? false,
-    insertEmptyLineAfterLogMessage:
-      workspaceConfig.insertEmptyLineAfterLogMessage ?? false,
     logFunction: workspaceConfig.logFunction ?? 'console.log',
   };
 }

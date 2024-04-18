@@ -45,8 +45,6 @@ You can change the following options in the [Visual Studio Code setting](https:/
 | Description | Setting | Default |
 | --- | --- | --- |
 | Log function to use in the inserted log message | `emojiConsoleLog.logFunction` | `console.log` |
-| Whether to insert an empty line before the log message | `emojiConsoleLog.insertEmptyLineBeforeLogMessage` | false |
-| Whether to insert an empty line after the log message | `emojiConsoleLog.insertEmptyLineAfterLogMessage` | true |
 
 You can also [redefine the key bindings](https://code.visualstudio.com/docs/getstarted/keybindings):
 
