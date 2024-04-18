@@ -1,16 +1,13 @@
 import * as vscode from 'vscode';
-import { DebugMessage } from './debug-message';
 import { JSDebugMessage } from './debug-message/js';
-import { Command, ExtensionProperties } from './entities';
-import { LineCodeProcessing } from './line-code-processing';
+import { ExtensionProperties } from './entities';
 import { JSLineCodeProcessing } from './line-code-processing/js';
 import { getAllCommands } from './commands/';
-import { DebugMessageLine } from './debug-message/DebugMessageLine';
 import { JSDebugMessageLine } from './debug-message/js/JSDebugMessageLine';
 
 function getExtensionProperties(
   workspaceConfig: vscode.WorkspaceConfiguration,
-) {
+): ExtensionProperties {
   return {
     insertEmptyLineBeforeLogMessage:
       workspaceConfig.insertEmptyLineBeforeLogMessage ?? false,
@@ -21,18 +18,15 @@ function getExtensionProperties(
 }
 
 export function activate(): void {
-  const jsLineCodeProcessing: LineCodeProcessing = new JSLineCodeProcessing();
-  const debugMessageLine: DebugMessageLine = new JSDebugMessageLine(
-    jsLineCodeProcessing,
-  );
-  const jsDebugMessage: DebugMessage = new JSDebugMessage(
+  const jsLineCodeProcessing = new JSLineCodeProcessing();
+  const debugMessageLine = new JSDebugMessageLine(jsLineCodeProcessing);
+  const jsDebugMessage = new JSDebugMessage(
     jsLineCodeProcessing,
     debugMessageLine,
   );
-  const config: vscode.WorkspaceConfiguration =
-    vscode.workspace.getConfiguration('emojiConsoleLog');
-  const properties: ExtensionProperties = getExtensionProperties(config);
-  const commands: Command[] = getAllCommands();
+  const config = vscode.workspace.getConfiguration('emojiConsoleLog');
+  const properties = getExtensionProperties(config);
+  const commands = getAllCommands();
   for (const { name, handler } of commands) {
     vscode.commands.registerCommand(name, (args: unknown[]) => {
       handler(properties, jsDebugMessage, args);
