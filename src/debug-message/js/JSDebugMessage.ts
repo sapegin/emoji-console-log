@@ -178,8 +178,10 @@ export class JSDebugMessage extends DebugMessage {
       lineOfLogMsg,
     );
 
-    const message = `${style.quote}${getRandomEmoji()} ${selectedVar}${style.quote}`;
-    const debuggingMsgContent = `${extensionProperties.logFunction}(${message}, ${selectedVar})${style.semicolon}`;
+    const varToLog =
+      (logMsg.metadata as LogContextMetadata)?.deepObjectPath ?? selectedVar;
+    const message = `${style.quote}${getRandomEmoji()} ${varToLog}${style.quote}`;
+    const debuggingMsgContent = `${extensionProperties.logFunction}(${message}, ${varToLog})${style.semicolon}`;
     const debuggingMsg = `${spacesBeforeMsg}${debuggingMsgContent}`;
     const selectedVarLine = document.lineAt(lineOfSelectedVar);
     const selectedVarLineLoc = selectedVarLine.text;
