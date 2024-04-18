@@ -18,6 +18,7 @@ export const emojis = [
   '😺',
   '🌝',
   '🔥',
+  '🚀',
 ];
 
 export function getRandomEmoji(): string {
