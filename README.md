@@ -11,8 +11,9 @@ _This is a fork of the [Turbo Console Log](https://www.turboconsolelog.io) exten
 ## Features
 
 - Hotkeys to add, comment, uncomment, and remove logs to monitor different values.
-- Adds random emoji to each log to make it easier to distinguish different logs in the browser console.
+- Adds random non-repeating emoji to each log to make it easier to distinguish different logs in the browser console.
 - Automatically detects project’s code style (quotes, semicolons, tabs/spaces, etc.).
+- Automagically adds new lines at the right places to keep the code neat.
 
 This extension adds four commands to your Visual Studio Code:
 
