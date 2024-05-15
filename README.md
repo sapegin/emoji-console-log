@@ -75,6 +75,14 @@ The main differences with Turbo Console Log are:
 
 The changelog can be found on the [Changelog.md](./Changelog.md) file.
 
+## You may also like
+
+Check out my other Visual Studio Code extensions:
+
+- [Todo Tomorrow](marketplace.visualstudio.com/items?itemName=sapegin.todo-tomorrow): highlight `TODO`, `HACK`, `FIXME`, etc. comments
+- [Squirrelsong Light Theme](https://marketplace.visualstudio.com/items?itemName=sapegin.Theme-SquirrelsongLight): low contrast non-distracting light theme for web developers
+- [Squirrelsong Dark Theme](https://marketplace.visualstudio.com/items?itemName=sapegin.Theme-SquirrelsongDark): low contrast non-distracting dark theme for web developers
+
 ## Sponsoring
 
 This software has been developed with lots of coffee, buy me one more cup to keep it going.
