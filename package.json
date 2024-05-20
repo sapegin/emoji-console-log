@@ -33,6 +33,9 @@
   "sponsor": {
     "url": "https://www.buymeacoffee.com/sapegin"
   },
+  "galleryBanner": {
+    "color": "#e9b986"
+  },
   "activationEvents": [
     "onLanguage:javascript",
     "onLanguage:javascriptreact",

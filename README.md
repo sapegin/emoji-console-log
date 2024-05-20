@@ -19,7 +19,7 @@ This extension adds four commands to your Visual Studio Code:
 
 ### Insert a log message
 
-Place a cursor or select a variable that you want to log, and press **Shift+Alt+L** (Windows) or **Shift+Option+L** (Mac). A log message will be inserted in the next line relative to the selected variable like so:
+Place a cursor or select a variable that you want to log, and press <kbd>Shift</kbd>+<kbd>Option</kbd>+<kbd>L</kbd> (Mac) or <kbd>Shift</kbd>+<kbd>Alt</kbd>+<kbd>L</kbd> (Windows). A log message will be inserted in the next line relative to the selected variable like so:
 
 ```js
 console.log('🦆 variable', variable);
@@ -29,15 +29,15 @@ Multiple cursor selection is also supported.
 
 ### Comment all log messages, inserted by the extension, in the open file
 
-Press **Shift+Alt+C** (Windows) or **Shift+Option+C** (Mac).
+Press <kbd>Shift</kbd>+<kbd>Option</kbd>+<kbd>C</kbd> (Mac) or <kbd>Shift</kbd>+<kbd>Alt</kbd>+<kbd>C</kbd> (Windows).
 
 ### Uncomment all log messages, inserted by the extension, in the open file
 
-Press **Shift+Alt+U** (Windows) or **Shift+Option+U** (Mac).
+Press <kbd>Shift</kbd>+<kbd>Option</kbd>+<kbd>U</kbd> (Mac) or <kbd>Shift</kbd>+<kbd>Alt</kbd>+<kbd>U</kbd> (Windows).
 
 ### Delete all log messages, inserted by the extension, in the open file
 
-Press **Shift+Alt+D** (Windows) or **Shift+Option+D** (Mac).
+Press <kbd>Shift</kbd>+<kbd>Option</kbd>+<kbd>D</kbd> (Mac) or <kbd>Shift</kbd>+<kbd>Alt</kbd>+<kbd>D</kbd> (Windows).
 
 ## Settings
 
@@ -49,12 +49,12 @@ You can change the following options in the [Visual Studio Code setting](https:/
 
 You can also [redefine the key bindings](https://code.visualstudio.com/docs/getstarted/keybindings):
 
-| Description | Name | Default Win | Default Mac |
+| Description | Name | Default Mac | Default Windows |
 | --- | --- | --- | --- |
-| Insert a log message | `emojiConsoleLog.addLogMessage` | Shift+Alt+L | Shift+Option+L |
-| Comment all log messages | `emojiConsoleLog.commentAllLogMessages` | Shift+Alt+C | Shift+Option+C |
-| Uncomment all log messages | `emojiConsoleLog.uncommentAllLogMessages` | Shift+Alt+U | Shift+Option+U |
-| Delete all log messages | `emojiConsoleLog.removeAllLogMessages` | Shift+Alt+D | Shift+Option+D |
+| Insert a log message | `emojiConsoleLog.addLogMessage` | <kbd>Shift</kbd>+<kbd>Option</kbd>+<kbd>L</kbd> | <kbd>Shift</kbd>+<kbd>Alt</kbd>+<kbd>L</kbd> |
+| Comment all log messages | `emojiConsoleLog.commentAllLogMessages` | <kbd>Shift</kbd>+<kbd>Option</kbd>+<kbd>C</kbd> | <kbd>Shift</kbd>+<kbd>Alt</kbd>+<kbd>C</kbd> |
+| Uncomment all log messages | `emojiConsoleLog.uncommentAllLogMessages` | <kbd>Shift</kbd>+<kbd>Option</kbd>+<kbd>U</kbd> | <kbd>Shift</kbd>+<kbd>Alt</kbd>+<kbd>U</kbd> |
+| Delete all log messages | `emojiConsoleLog.removeAllLogMessages` | <kbd>Shift</kbd>+<kbd>Option</kbd>+<kbd>D</kbd> | <kbd>Shift</kbd>+<kbd>Alt</kbd>+<kbd>D</kbd> |
 
 ## Motivation
 
@@ -79,7 +79,8 @@ The changelog can be found on the [Changelog.md](./Changelog.md) file.
 
 Check out my other Visual Studio Code extensions:
 
-- [Todo Tomorrow](marketplace.visualstudio.com/items?itemName=sapegin.todo-tomorrow): highlight `TODO`, `HACK`, `FIXME`, etc. comments
+- [Todo Tomorrow](https://marketplace.visualstudio.com/items?itemName=sapegin.todo-tomorrow): Highlights `TODO`, `HACK`, `FIXME`, etc. comments
+- [New File Now](https://marketplace.visualstudio.com/items?itemName=sapegin.new-file-now): create new files from the command palette
 - [Squirrelsong Light Theme](https://marketplace.visualstudio.com/items?itemName=sapegin.Theme-SquirrelsongLight): low contrast non-distracting light theme for web developers
 - [Squirrelsong Dark Theme](https://marketplace.visualstudio.com/items?itemName=sapegin.Theme-SquirrelsongDark): low contrast non-distracting dark theme for web developers
 
