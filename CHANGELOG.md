@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.5
+
+- Import separate modules from Lodash: reduces the extension bundle size in half.
+
 ## 1.0.4
 
 - Remove unnecessary files form the package.

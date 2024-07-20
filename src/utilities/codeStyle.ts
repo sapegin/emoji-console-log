@@ -1,6 +1,6 @@
 import { basename, dirname } from 'path';
 import { readFileSync } from 'fs';
-import _ from 'lodash';
+import memoize from 'lodash/memoize';
 import { findUp } from 'find-up';
 import { TextEditorOptions, window } from 'vscode';
 
@@ -165,4 +165,4 @@ async function getFileCodeStyleRaw(
   return style;
 }
 
-export const getFileCodeStyle = _.memoize(getFileCodeStyleRaw);
+export const getFileCodeStyle = memoize(getFileCodeStyleRaw);

@@ -9,7 +9,7 @@ import {
   MultilineContextVariable,
 } from '../../entities';
 import { LineCodeProcessing } from '../../line-code-processing';
-import _ from 'lodash';
+import sortBy from 'lodash/sortBy';
 import { DebugMessage } from '../DebugMessage';
 import { DebugMessageLine } from '../DebugMessageLine';
 import {
@@ -25,7 +25,7 @@ import {
   NamedFunctionMetadata,
 } from '../../entities/extension/logMessage';
 
-const logMessageTypeVerificationPriority = _.sortBy(
+const logMessageTypeVerificationPriority = sortBy(
   [
     { logMessageType: LogMessageType.ArrayAssignment, priority: 2 },
     { logMessageType: LogMessageType.ObjectLiteral, priority: 3 },
