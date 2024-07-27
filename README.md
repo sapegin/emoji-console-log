@@ -79,6 +79,7 @@ The changelog can be found on the [Changelog.md](./Changelog.md) file.
 
 Check out my other Visual Studio Code extensions:
 
+- [Just Blame](https://marketplace.visualstudio.com/items?itemName=sapegin.just-blame): Git Blame annotations, inspired by JetBrains editors
 - [New File Now](https://marketplace.visualstudio.com/items?itemName=sapegin.new-file-now): create new files from the command palette
 - [Notebox](https://marketplace.visualstudio.com/items?itemName=sapegin.notebox): take quick notes in the bottom panel
 - [Todo Tomorrow](https://marketplace.visualstudio.com/items?itemName=sapegin.todo-tomorrow): Highlights `TODO`, `HACK`, `FIXME`, etc. comments
