@@ -6,7 +6,6 @@ import {
   LogMessageType,
   Message,
 } from '../types';
-import { LineCodeProcessing } from '../line-code-processing';
 import { DebugMessageLine } from './DebugMessageLine';
 import {
   getMultiLineContextVariable,
@@ -18,6 +17,19 @@ import {
 import { DebugMessageAnonymous } from './DebugMessageAnonymous';
 import type { LogMessage } from '../types/LogMessage';
 import { logDebugMessage } from '../utilities/debug';
+import { isObjectLiteralAssignedToVariable } from '../utilities/isObjectLiteralAssignedToVariable';
+import { isArrayAssignedToVariable } from '../utilities/isArrayAssignedToVariable';
+import { isAssignedToVariable } from '../utilities/isAssignedToVariable';
+import { isAffectationToVariable } from '../utilities/isAffectationToVariable';
+import { isObjectFunctionCall } from '../utilities/isObjectFunctionCall';
+import { doesContainsNamedFunctionDeclaration } from '../utilities/doesContainsNamedFunctionDeclaration';
+import { isFunctionAssignedToVariable } from '../utilities/isFunctionAssignedToVariable';
+import { isAnonymousFunction } from '../utilities/isAnonymousFunction';
+import { shouldTransformAnonymousFunction } from '../utilities/shouldTransformAnonymousFunction';
+import { doesContainClassDeclaration } from '../utilities/doesContainClassDeclaration';
+import { getClassName } from '../utilities/getClassName';
+import { doesContainsBuiltInFunction } from '../utilities/doesContainsBuiltInFunction';
+import { getFunctionName } from '../utilities/getFunctionName';
 
 const logMessageTypeVerificationPriority = [
   LogMessageType.Decorator,
@@ -34,17 +46,12 @@ const logMessageTypeVerificationPriority = [
 ];
 
 export class DebugMessage {
-  lineCodeProcessing: LineCodeProcessing;
   debugMessageLine: DebugMessageLine;
   debugMessageAnonymous: DebugMessageAnonymous;
 
-  constructor(
-    lineCodeProcessing: LineCodeProcessing,
-    debugMessageLine: DebugMessageLine,
-  ) {
-    this.lineCodeProcessing = lineCodeProcessing;
+  constructor(debugMessageLine: DebugMessageLine) {
     this.debugMessageLine = debugMessageLine;
-    this.debugMessageAnonymous = new DebugMessageAnonymous(lineCodeProcessing);
+    this.debugMessageAnonymous = new DebugMessageAnonymous();
   }
 
   private line(
@@ -314,11 +321,7 @@ export class DebugMessage {
         }
 
         const combinedText = `${currentLineText}${nextLineText}`;
-        if (
-          this.lineCodeProcessing.isObjectLiteralAssignedToVariable(
-            combinedText,
-          )
-        ) {
+        if (isObjectLiteralAssignedToVariable(combinedText)) {
           return {
             type: LogMessageType.ObjectLiteral,
           };
@@ -335,9 +338,7 @@ export class DebugMessage {
 
       [LogMessageType.ArrayAssignment]: () => {
         if (
-          this.lineCodeProcessing.isArrayAssignedToVariable(
-            `${currentLineText}\n${currentLineText}`,
-          )
+          isArrayAssignedToVariable(`${currentLineText}\n${currentLineText}`)
         ) {
           return {
             type: LogMessageType.ArrayAssignment,
@@ -356,8 +357,8 @@ export class DebugMessage {
       [LogMessageType.MultilineBraces]: () => {
         const isChecked =
           multilineBracesVariable &&
-          !this.lineCodeProcessing.isAssignedToVariable(currentLineText) &&
-          !this.lineCodeProcessing.isAffectationToVariable(currentLineText);
+          !isAssignedToVariable(currentLineText) &&
+          !isAffectationToVariable(currentLineText);
 
         if (isChecked && multilineBracesVariable) {
           return {
@@ -380,7 +381,7 @@ export class DebugMessage {
             .lineAt(selectionLine)
             .text.includes('(');
           if (isOpeningCurlyBraceContext || isOpeningParenthesisContext) {
-            if (this.lineCodeProcessing.isAssignedToVariable(currentLineText)) {
+            if (isAssignedToVariable(currentLineText)) {
               return {
                 type: LogMessageType.MultilineParenthesis,
                 metadata: {
@@ -416,10 +417,8 @@ export class DebugMessage {
           .lineAt(selectionLine + 1)
           .text.replaceAll(/\s/g, '');
         if (
-          this.lineCodeProcessing.isObjectFunctionCall(
-            `${currentLineText}\n${nextLineText}`,
-          ) &&
-          this.lineCodeProcessing.isAssignedToVariable(currentLineText)
+          isObjectFunctionCall(`${currentLineText}\n${nextLineText}`) &&
+          isAssignedToVariable(currentLineText)
         ) {
           return {
             type: LogMessageType.ObjectFunctionCallAssignment,
@@ -428,11 +427,7 @@ export class DebugMessage {
       },
 
       [LogMessageType.NamedFunction]: () => {
-        if (
-          this.lineCodeProcessing.doesContainsNamedFunctionDeclaration(
-            currentLineText,
-          )
-        ) {
+        if (doesContainsNamedFunctionDeclaration(currentLineText)) {
           return {
             type: LogMessageType.NamedFunction,
             metadata: {
@@ -444,9 +439,7 @@ export class DebugMessage {
 
       [LogMessageType.NamedFunctionAssignment]: () => {
         if (
-          this.lineCodeProcessing.isFunctionAssignedToVariable(
-            `${currentLineText}`,
-          ) &&
+          isFunctionAssignedToVariable(`${currentLineText}`) &&
           multilineParenthesisVariable === null
         ) {
           return {
@@ -457,13 +450,9 @@ export class DebugMessage {
 
       [LogMessageType.MultiLineAnonymousFunction]: () => {
         if (
-          this.lineCodeProcessing.isFunctionAssignedToVariable(
-            `${currentLineText}`,
-          ) &&
-          this.lineCodeProcessing.isAnonymousFunction(currentLineText) &&
-          this.lineCodeProcessing.shouldTransformAnonymousFunction(
-            currentLineText,
-          )
+          isFunctionAssignedToVariable(`${currentLineText}`) &&
+          isAnonymousFunction(currentLineText) &&
+          shouldTransformAnonymousFunction(currentLineText)
         ) {
           return {
             type: LogMessageType.MultiLineAnonymousFunction,
@@ -504,9 +493,7 @@ export class DebugMessage {
       switch (blockType) {
         case 'class': {
           if (
-            this.lineCodeProcessing.doesContainClassDeclaration(
-              currentLineText,
-            ) &&
+            doesContainClassDeclaration(currentLineText) &&
             lineOfSelectedVariable > currentLineNumber &&
             lineOfSelectedVariable <
               closingContextLine(
@@ -515,18 +502,14 @@ export class DebugMessage {
                 BracketType.CURLY_BRACES,
               )
           ) {
-            return `${this.lineCodeProcessing.getClassName(currentLineText)}`;
+            return `${getClassName(currentLineText)}`;
           }
           break;
         }
         case 'function': {
           if (
-            this.lineCodeProcessing.doesContainsNamedFunctionDeclaration(
-              currentLineText,
-            ) &&
-            !this.lineCodeProcessing.doesContainsBuiltInFunction(
-              currentLineText,
-            ) &&
+            doesContainsNamedFunctionDeclaration(currentLineText) &&
+            !doesContainsBuiltInFunction(currentLineText) &&
             lineOfSelectedVariable >= currentLineNumber &&
             lineOfSelectedVariable <
               closingContextLine(
@@ -535,15 +518,7 @@ export class DebugMessage {
                 BracketType.CURLY_BRACES,
               )
           ) {
-            if (
-              this.lineCodeProcessing.getFunctionName(currentLineText).length >
-              0
-            ) {
-              return `${this.lineCodeProcessing.getFunctionName(
-                currentLineText,
-              )}`;
-            }
-            return '';
+            return getFunctionName(currentLineText);
           }
           break;
         }

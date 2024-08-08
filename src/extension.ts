@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
 import { DebugMessage } from './debug-message';
 import { ExtensionProperties } from './types';
-import { LineCodeProcessing } from './line-code-processing';
 import { getAllCommands } from './commands/';
 import { DebugMessageLine } from './debug-message/DebugMessageLine';
 
@@ -14,9 +13,8 @@ function getExtensionProperties(
 }
 
 export function activate(): void {
-  const lineCodeProcessing = new LineCodeProcessing();
-  const debugMessageLine = new DebugMessageLine(lineCodeProcessing);
-  const debugMessage = new DebugMessage(lineCodeProcessing, debugMessageLine);
+  const debugMessageLine = new DebugMessageLine();
+  const debugMessage = new DebugMessage(debugMessageLine);
   const config = vscode.workspace.getConfiguration('emojiConsoleLog');
   const properties = getExtensionProperties(config);
   const commands = getAllCommands();

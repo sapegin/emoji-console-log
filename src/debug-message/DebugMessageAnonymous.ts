@@ -1,24 +1,23 @@
 import { Position, TextDocument, TextEditorEdit, TextLine } from 'vscode';
 import { BracketType } from '../types';
-import { LineCodeProcessing } from '../line-code-processing';
 import { spacesBeforeLine, closingContextLine, CodeStyle } from '../utilities';
+import { isAnonymousFunction } from '../utilities/isAnonymousFunction';
+import { isArgumentOfAnonymousFunction } from '../utilities/isArgumentOfAnonymousFunction';
+import { shouldTransformAnonymousFunction } from '../utilities/shouldTransformAnonymousFunction';
 
+// TODO: Move to separate utilities
 export class DebugMessageAnonymous {
-  lineCodeProcessing: LineCodeProcessing;
-  constructor(lineCodeProcessing: LineCodeProcessing) {
-    this.lineCodeProcessing = lineCodeProcessing;
-  }
   isAnonymousFunctionContext(
     selectedVariable: string,
     selectedVariableLineLoc: string,
   ): boolean {
     return (
-      this.lineCodeProcessing.isAnonymousFunction(selectedVariableLineLoc) &&
-      this.lineCodeProcessing.isArgumentOfAnonymousFunction(
+      isAnonymousFunction(selectedVariableLineLoc) &&
+      isArgumentOfAnonymousFunction(
         selectedVariableLineLoc,
         selectedVariable,
       ) &&
-      this.lineCodeProcessing.shouldTransformAnonymousFunction(
+      shouldTransformAnonymousFunction(
         selectedVariableLineLoc,
       )
     );

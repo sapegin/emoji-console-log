@@ -1,13 +1,9 @@
 import { TextDocument } from 'vscode';
 import { BracketType, LogMessageType, type LogMessage } from '../types';
 import { getMultiLineContextVariable } from '../utilities';
-import { LineCodeProcessing } from '../line-code-processing';
 
+// TODO: Looks like this is also static...
 export class DebugMessageLine {
-  lineCodeProcessing: LineCodeProcessing;
-  constructor(lineCodeProcessing: LineCodeProcessing) {
-    this.lineCodeProcessing = lineCodeProcessing;
-  }
   line(
     document: TextDocument,
     selectionLine: number,
