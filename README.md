@@ -19,13 +19,17 @@ This extension adds four commands to your Visual Studio Code:
 
 ### Insert a log message
 
-Place a cursor or select a variable that you want to log, and press <kbd>Shift</kbd>+<kbd>Option</kbd>+<kbd>L</kbd> (Mac) or <kbd>Shift</kbd>+<kbd>Alt</kbd>+<kbd>L</kbd> (Windows). A log message will be inserted in the next line relative to the selected variable like so:
+Place a cursor at or select a variable that you want to log, and press <kbd>Shift</kbd>+<kbd>Option</kbd>+<kbd>L</kbd> (Mac) or <kbd>Shift</kbd>+<kbd>Alt</kbd>+<kbd>L</kbd> (Windows). A log message will be inserted at the next line like so:
 
 ```js
 console.log('🦆 variable', variable);
 ```
 
-Multiple cursor selection is also supported.
+When there’s no recognized symbol under the cursor, the extension adds an “empty” log:
+
+```js
+console.log('🦊');
+```
 
 ### Comment all log messages, inserted by the extension, in the open file
 

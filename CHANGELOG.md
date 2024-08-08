@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.0
+
+- Allow empty logs when the command is invoked on an empty line.
+- Support more symbol types for logging: optional chaining, array element, etc.
+- Fix incorrect `lineAt()` call that was preventing log insertion in some cases.
+- Remove deep object property support.
+
 ## 1.0.5
 
 - Import separate modules from Lodash: reduces the extension bundle size in half.
