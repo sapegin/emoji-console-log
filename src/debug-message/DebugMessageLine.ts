@@ -1,10 +1,5 @@
 import { TextDocument } from 'vscode';
-import {
-  BracketType,
-  LogContextMetadata,
-  LogMessage,
-  LogMessageType,
-} from '../types';
+import { BracketType, LogMessageType, type LogMessageCheck } from '../types';
 import { getMultiLineContextVariable } from '../utilities';
 import { LineCodeProcessing } from '../line-code-processing';
 
@@ -17,9 +12,9 @@ export class DebugMessageLine {
     document: TextDocument,
     selectionLine: number,
     selectedVariable: string,
-    logMessage: LogMessage,
+    logMessage: LogMessageCheck,
   ): number {
-    switch (logMessage.logMessageType) {
+    switch (logMessage.type) {
       case LogMessageType.ObjectLiteral: {
         return this.objectLiteralLine(document, selectionLine);
       }
@@ -60,20 +55,15 @@ export class DebugMessageLine {
         return this.arrayLine(document, selectionLine);
       }
       case LogMessageType.MultilineParenthesis: {
-        return (
-          ((logMessage?.metadata as LogContextMetadata)?.closingContextLine ||
-            selectionLine) + 1
-        );
+        return (logMessage.metadata.closingContextLine || selectionLine) + 1;
       }
       case LogMessageType.Ternary: {
         return this.templateStringLine(document, selectionLine);
       }
       case LogMessageType.MultilineBraces: {
         // Deconstructing assignment
-        if ((logMessage?.metadata as LogContextMetadata)?.closingContextLine) {
-          return (
-            (logMessage?.metadata as LogContextMetadata)?.closingContextLine + 1
-          );
+        if (logMessage.metadata.closingContextLine) {
+          return logMessage.metadata.closingContextLine + 1;
         }
         return selectionLine + 1;
       }
