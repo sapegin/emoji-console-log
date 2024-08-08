@@ -46,7 +46,7 @@ export default (): void => {
         );
         const textDocument = activeTextEditor.document;
         expect(
-          /\{\s*$/.test(textDocument.lineAt(naturalEditorLine(7)).text),
+          /{\s*$/.test(textDocument.lineAt(naturalEditorLine(7)).text),
         ).to.equal(true);
         const logMessage = textDocument.lineAt(naturalEditorLine(8)).text;
         expect(/console\.log\(.*/.test(logMessage)).to.equal(true);
@@ -73,7 +73,7 @@ export default (): void => {
         );
         const textDocument = activeTextEditor.document;
         expect(
-          /\{\s*$/.test(textDocument.lineAt(naturalEditorLine(14)).text),
+          /{\s*$/.test(textDocument.lineAt(naturalEditorLine(14)).text),
         ).to.equal(true);
         const logMessage = textDocument.lineAt(naturalEditorLine(15)).text;
         expect(/console\.log\(.*/.test(logMessage)).to.equal(true);

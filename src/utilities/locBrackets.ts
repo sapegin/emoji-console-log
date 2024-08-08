@@ -7,10 +7,10 @@ export function locBrackets(loc: string, bracketType: BracketType): LogBracket {
     bracketType === BracketType.PARENTHESIS ? /\(/g : /{/g;
   const closedElement: RegExp =
     bracketType === BracketType.PARENTHESIS ? /\)/g : /}/g;
-  while (openedElement.exec(loc)) {
+  while (openedElement.test(loc)) {
     openingBrackets++;
   }
-  while (closedElement.exec(loc)) {
+  while (closedElement.test(loc)) {
     closingBrackets++;
   }
   return {

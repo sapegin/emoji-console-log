@@ -28,15 +28,15 @@ export function addLogMessageCommand(): Command {
         if (rangeUnderCursor) {
           wordUnderCursor = document.getText(rangeUnderCursor);
         }
-        const selectedVar = document.getText(selection) || wordUnderCursor;
-        const lineOfSelectedVar = selection.active.line;
-        if (selectedVar.trim().length !== 0) {
+        const selectedVariable = document.getText(selection) || wordUnderCursor;
+        const lineOfSelectedVariable = selection.active.line;
+        if (selectedVariable.trim().length > 0) {
           await editor.edit((editBuilder) => {
             jsDebugMessage.msg(
               editBuilder,
               document,
-              selectedVar,
-              lineOfSelectedVar,
+              selectedVariable,
+              lineOfSelectedVariable,
               style,
               extensionProperties,
             );

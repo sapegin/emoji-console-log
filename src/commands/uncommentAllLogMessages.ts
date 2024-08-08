@@ -21,15 +21,15 @@ export function uncommentAllLogMessagesCommand(): Command {
         logFunction,
       );
       editor.edit((editBuilder) => {
-        logMessages.forEach(({ spaces, lines }) => {
-          lines.forEach((line: vscode.Range) => {
+        for (const { spaces, lines } of logMessages) {
+          for (const line of lines) {
             editBuilder.delete(line);
             editBuilder.insert(
               new vscode.Position(line.start.line, 0),
-              `${spaces}${document.getText(line).replace(/\//g, '').trim()}\n`,
+              `${spaces}${document.getText(line).replaceAll('/', '').trim()}\n`,
             );
-          });
-        });
+          }
+        }
       });
     },
   };

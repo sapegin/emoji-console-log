@@ -20,16 +20,16 @@ export function removeAllLogMessagesCommand(): Command {
         logFunction,
       );
       editor.edit((editBuilder) => {
-        logMessages.forEach(({ lines }) => {
+        for (const { lines } of logMessages) {
           const firstLine = lines[0];
-          const lastLine = lines[lines.length - 1];
+          const lastLine = lines.at(-1);
           const lineBeforeFirstLine = new vscode.Range(
             new vscode.Position(firstLine.start.line - 1, 0),
             new vscode.Position(firstLine.end.line - 1, 0),
           );
           const lineAfterLastLine = new vscode.Range(
-            new vscode.Position(lastLine.start.line + 1, 0),
-            new vscode.Position(lastLine.end.line + 1, 0),
+            new vscode.Position(lastLine?.start.line ?? 0 + 1, 0),
+            new vscode.Position(lastLine?.end.line ?? 0 + 1, 0),
           );
           if (document.lineAt(lineBeforeFirstLine.start).text === '') {
             editBuilder.delete(lineBeforeFirstLine);
@@ -37,10 +37,10 @@ export function removeAllLogMessagesCommand(): Command {
           if (document.lineAt(lineAfterLastLine.start).text === '') {
             editBuilder.delete(lineAfterLastLine);
           }
-          lines.forEach((line: vscode.Range) => {
+          for (const line of lines) {
             editBuilder.delete(line);
-          });
-        });
+          }
+        }
       });
     },
   };

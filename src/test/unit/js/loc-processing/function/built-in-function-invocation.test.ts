@@ -19,23 +19,23 @@ export default (): void => {
                           n++;
                       }`,
       ];
-      builtInFunctionInvocationLOCs.forEach((builtInFunctionInvocationLOC) => {
+      for (const builtInFunctionInvocationLOC of builtInFunctionInvocationLOCs) {
         expect(
           helpers.jsLineCodeProcessing.doesContainsBuiltInFunction(
             builtInFunctionInvocationLOC,
           ),
         ).to.equal(true);
-      });
+      }
     });
     it('Should return false when loc does not contain a built-in function', () => {
       const nonBuiltInFunctionLOCs = [`function sayHello() {`];
-      nonBuiltInFunctionLOCs.forEach((nonBuiltInFunctionLOC) => {
+      for (const nonBuiltInFunctionLOC of nonBuiltInFunctionLOCs) {
         expect(
           helpers.jsLineCodeProcessing.doesContainsBuiltInFunction(
             nonBuiltInFunctionLOC,
           ),
         ).to.equal(false);
-      });
+      }
     });
   });
 };

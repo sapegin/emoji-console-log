@@ -5,7 +5,7 @@ export interface DebugMessageLine {
   line(
     document: TextDocument,
     selectionLine: number,
-    selectedVar: string,
-    logMsg: LogMessage,
+    selectedVariable: string,
+    logMessage: LogMessage,
   ): number;
 }

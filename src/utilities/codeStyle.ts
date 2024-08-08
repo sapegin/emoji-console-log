@@ -1,5 +1,8 @@
-import { basename, dirname } from 'path';
-import { readFileSync } from 'fs';
+/* eslint-disable unicorn/prefer-module */
+/* eslint-disable @typescript-eslint/no-require-imports */
+
+import path from 'node:path';
+import { readFileSync } from 'node:fs';
 import memoize from 'lodash/memoize';
 import { findUp } from 'find-up';
 import { TextEditorOptions, window } from 'vscode';
@@ -24,17 +27,16 @@ const defaultSingleQuote = false;
 
 async function readPrettierConfigJavaScript(filepath: string) {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const config = require(filepath);
 
     debug.appendLine(`Prettier config:`);
     debug.appendLine(JSON.stringify(config));
 
     return config;
-  } catch (err) {
+  } catch (error) {
     debug.appendLine(`Cannot read Prettier config from ${filepath}:`);
-    if (err instanceof Error) {
-      debug.appendLine(err.message);
+    if (error instanceof Error) {
+      debug.appendLine(error.message);
     }
     return {};
   }
@@ -48,10 +50,10 @@ async function readPrettierConfigJson(filepath: string) {
     debug.appendLine(JSON.stringify(config));
 
     return config;
-  } catch (err) {
+  } catch (error) {
     debug.appendLine(`Cannot read Prettier config from ${filepath}:`);
-    if (err instanceof Error) {
-      debug.appendLine(err.message);
+    if (error instanceof Error) {
+      debug.appendLine(error.message);
     }
     return {};
   }
@@ -69,31 +71,33 @@ async function readPrettierConfigPackage(filepath: string) {
     } else {
       return {};
     }
-  } catch (err) {
+  } catch (error) {
     debug.appendLine(`Cannot read Prettier config from ${filepath}:`);
-    if (err instanceof Error) {
-      debug.appendLine(err.message);
+    if (error instanceof Error) {
+      debug.appendLine(error.message);
     }
     return {};
   }
 }
 
 async function getPrettierConfig(filepath: string) {
-  const filename = basename(filepath);
+  const filename = path.basename(filepath);
   switch (filename) {
     // JSON
     case '.prettierrc':
-    case '.prettierrc.json':
+    case '.prettierrc.json': {
       return readPrettierConfigJson(filepath);
+    }
 
     // JavaScript
-    default:
+    default: {
       return readPrettierConfigJavaScript(filepath);
+    }
   }
 }
 
 async function resolvePrettierConfig(filepath: string) {
-  const cwd = dirname(filepath);
+  const cwd = path.dirname(filepath);
 
   // Try to find Prettier config
   const configFile = await findUp(

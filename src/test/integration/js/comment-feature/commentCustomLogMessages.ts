@@ -45,7 +45,7 @@ export default (): void => {
           expect(
             textDocument
               .lineAt(logMessageLine)
-              .text.replace(/\s/g, '')
+              .text.replaceAll(/\s/g, '')
               .startsWith('//'),
           ).to.equal(true);
         }

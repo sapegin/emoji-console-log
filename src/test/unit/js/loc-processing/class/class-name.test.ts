@@ -17,11 +17,11 @@ export default (): void => {
         'HelloWorld',
         'Day',
       ];
-      classLOCs.forEach((classLOC, index) => {
+      for (const [index, classLOC] of classLOCs.entries()) {
         expect(helpers.jsLineCodeProcessing.getClassName(classLOC)).to.equal(
           classesNames[index],
         );
-      });
+      }
     });
   });
 };

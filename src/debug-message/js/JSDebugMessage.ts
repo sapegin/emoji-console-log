@@ -6,7 +6,6 @@ import {
   LogMessageType,
   Message,
   LogMessage,
-  MultilineContextVariable,
 } from '../../entities';
 import { LineCodeProcessing } from '../../line-code-processing';
 import sortBy from 'lodash/sortBy';
@@ -59,19 +58,21 @@ export class JSDebugMessage extends DebugMessage {
   private baseDebuggingMsg(
     document: TextDocument,
     textEditor: TextEditorEdit,
-    lineOfLogMsg: number,
-    debuggingMsg: string,
+    lineOfLogMessage: number,
+    debuggingMessage: string,
     insertEmptyLineBeforeLogMessage: boolean,
     insertEmptyLineAfterLogMessage: boolean,
   ): void {
     textEditor.insert(
       new Position(
-        lineOfLogMsg >= document.lineCount ? document.lineCount : lineOfLogMsg,
+        lineOfLogMessage >= document.lineCount
+          ? document.lineCount
+          : lineOfLogMessage,
         0,
       ),
       `${insertEmptyLineBeforeLogMessage ? '\n' : ''}${
-        lineOfLogMsg === document.lineCount ? '\n' : ''
-      }${debuggingMsg}\n${insertEmptyLineAfterLogMessage ? '\n' : ''}`,
+        lineOfLogMessage === document.lineCount ? '\n' : ''
+      }${debuggingMessage}\n${insertEmptyLineAfterLogMessage ? '\n' : ''}`,
     );
   }
   private isEmptyBlockContext(document: TextDocument, logMessage: LogMessage) {
@@ -81,14 +82,14 @@ export class JSDebugMessage extends DebugMessage {
           .lineAt(
             (logMessage.metadata as LogContextMetadata).closingContextLine,
           )
-          .text.replace(/\s/g, ''),
+          .text.replaceAll(/\s/g, ''),
       );
     }
     if (logMessage.logMessageType === LogMessageType.NamedFunction) {
       return /\){.*}/.test(
         document
           .lineAt((logMessage.metadata as NamedFunctionMetadata).line)
-          .text.replace(/\s/g, ''),
+          .text.replaceAll(/\s/g, ''),
       );
     }
     return false;
@@ -100,10 +101,10 @@ export class JSDebugMessage extends DebugMessage {
    */
   private shouldInsertEmptyLineAfterLogMessage(
     document: TextDocument,
-    lineOfLogMsg: number,
+    lineOfLogMessage: number,
     logFunction: ExtensionProperties['logFunction'],
   ) {
-    const lineUnderInsertion = document.lineAt(lineOfLogMsg);
+    const lineUnderInsertion = document.lineAt(lineOfLogMessage);
     const text = lineUnderInsertion.text.trimStart();
     return text !== '' && text.startsWith(logFunction) === false;
   }
@@ -112,22 +113,24 @@ export class JSDebugMessage extends DebugMessage {
     document: TextDocument,
     textEditor: TextEditorEdit,
     emptyBlockLine: TextLine,
-    logMsgLine: number,
-    debuggingMsg: string,
-    spacesBeforeMsg: string,
+    logMessageLine: number,
+    debuggingMessage: string,
+    spacesBeforeMessage: string,
   ) {
-    if (/\){.*}/.test(emptyBlockLine.text.replace(/\s/g, ''))) {
+    if (/\){.*}/.test(emptyBlockLine.text.replaceAll(/\s/g, ''))) {
       const textBeforeClosedFunctionParenthesis =
         emptyBlockLine.text.split(')')[0];
       textEditor.delete(emptyBlockLine.rangeIncludingLineBreak);
       textEditor.insert(
         new Position(
-          logMsgLine >= document.lineCount ? document.lineCount : logMsgLine,
+          logMessageLine >= document.lineCount
+            ? document.lineCount
+            : logMessageLine,
           0,
         ),
         `${textBeforeClosedFunctionParenthesis}) {\n${
-          logMsgLine === document.lineCount ? '\n' : ''
-        }${spacesBeforeMsg}${debuggingMsg}\n${spacesBeforeMsg}}\n`,
+          logMessageLine === document.lineCount ? '\n' : ''
+        }${spacesBeforeMessage}${debuggingMessage}\n${spacesBeforeMessage}}\n`,
       );
     }
   }
@@ -135,13 +138,16 @@ export class JSDebugMessage extends DebugMessage {
     document: TextDocument,
     line: number,
     path = '',
-  ): { path: string; line: number } | null {
+  ): { path: string; line: number } | undefined {
     const lineText = document.lineAt(line).text;
-    const propertyNameRegex = /(\w+):\s*\{/;
+    const propertyNameRegex = /(\w+):\s*{/;
     const propertyNameRegexMatch = propertyNameRegex.exec(lineText);
     if (propertyNameRegexMatch) {
-      const multilineBracesVariable: MultilineContextVariable | null =
-        getMultiLineContextVariable(document, line, BracketType.CURLY_BRACES);
+      const multilineBracesVariable = getMultiLineContextVariable(
+        document,
+        line,
+        BracketType.CURLY_BRACES,
+      );
       if (multilineBracesVariable) {
         return this.deepObjectProperty(
           document,
@@ -163,84 +169,90 @@ export class JSDebugMessage extends DebugMessage {
         line: closingContextLine(document, line, BracketType.CURLY_BRACES),
       };
     }
-    return null;
+    return undefined;
   }
   msg(
     textEditor: TextEditorEdit,
     document: TextDocument,
-    selectedVar: string,
-    lineOfSelectedVar: number,
+    selectedVariable: string,
+    lineOfSelectedVariable: number,
     style: CodeStyle,
     { logFunction }: ExtensionProperties,
   ): void {
-    const logMsg = this.logMessage(document, lineOfSelectedVar, selectedVar);
-    const lineOfLogMsg = this.line(
+    const logMessage = this.logMessage(
       document,
-      lineOfSelectedVar,
-      selectedVar,
-      logMsg,
+      lineOfSelectedVariable,
+      selectedVariable,
     );
-    const spacesBeforeMsg = this.spacesBeforeLogMsg(
+    const lineOfLogMessage = this.line(
       document,
-      (logMsg.metadata as LogContextMetadata)?.deepObjectLine
-        ? (logMsg.metadata as LogContextMetadata)?.deepObjectLine
-        : lineOfSelectedVar,
-      lineOfLogMsg,
+      lineOfSelectedVariable,
+      selectedVariable,
+      logMessage,
+    );
+    const spacesBeforeMessage = this.spacesBeforeLogMsg(
+      document,
+      (logMessage.metadata as LogContextMetadata)?.deepObjectLine ??
+        lineOfSelectedVariable,
+      lineOfLogMessage,
     );
 
     const insertEmptyLineBeforeLogMessage =
-      lineOfLogMsg - lineOfSelectedVar > 1;
+      lineOfLogMessage - lineOfSelectedVariable > 1;
     const insertEmptyLineAfterLogMessage =
       this.shouldInsertEmptyLineAfterLogMessage(
         document,
-        lineOfLogMsg,
+        lineOfLogMessage,
         logFunction,
       );
 
-    const varToLog =
-      (logMsg.metadata as LogContextMetadata)?.deepObjectPath ?? selectedVar;
-    const message = `${style.quote}${getRandomEmoji()} ${varToLog}${style.quote}`;
-    const debuggingMsgContent = `${logFunction}(${message}, ${varToLog})${style.semicolon}`;
-    const debuggingMsg = `${spacesBeforeMsg}${debuggingMsgContent}`;
-    const selectedVarLine = document.lineAt(lineOfSelectedVar);
-    const selectedVarLineLoc = selectedVarLine.text;
-    if (this.isEmptyBlockContext(document, logMsg)) {
+    const variableToLog =
+      (logMessage.metadata as LogContextMetadata)?.deepObjectPath ??
+      selectedVariable;
+    const message = `${style.quote}${getRandomEmoji()} ${variableToLog}${style.quote}`;
+    const debuggingMessageContent = `${logFunction}(${message}, ${variableToLog})${style.semicolon}`;
+    const debuggingMessage = `${spacesBeforeMessage}${debuggingMessageContent}`;
+    const selectedVariableLine = document.lineAt(lineOfSelectedVariable);
+    const selectedVariableLineLoc = selectedVariableLine.text;
+    if (this.isEmptyBlockContext(document, logMessage)) {
       const emptyBlockLine =
-        logMsg.logMessageType === LogMessageType.MultilineParenthesis
+        logMessage.logMessageType === LogMessageType.MultilineParenthesis
           ? document.lineAt(
-              (logMsg.metadata as LogContextMetadata).closingContextLine,
+              (logMessage.metadata as LogContextMetadata).closingContextLine,
             )
-          : document.lineAt((logMsg.metadata as NamedFunctionMetadata).line);
+          : document.lineAt(
+              (logMessage.metadata as NamedFunctionMetadata).line,
+            );
       this.emptyBlockDebuggingMsg(
         document,
         textEditor,
         emptyBlockLine,
-        lineOfLogMsg,
-        debuggingMsgContent,
-        spacesBeforeMsg,
+        lineOfLogMessage,
+        debuggingMessageContent,
+        spacesBeforeMessage,
       );
       return;
     }
     if (
       this.jsDebugMessageAnonymous.isAnonymousFunctionContext(
-        selectedVar,
-        selectedVarLineLoc,
+        selectedVariable,
+        selectedVariableLineLoc,
       )
     ) {
       this.jsDebugMessageAnonymous.anonymousPropDebuggingMsg(
         document,
         textEditor,
         style,
-        selectedVarLine,
-        debuggingMsgContent,
+        selectedVariableLine,
+        debuggingMessageContent,
       );
       return;
     }
     this.baseDebuggingMsg(
       document,
       textEditor,
-      lineOfLogMsg,
-      debuggingMsg,
+      lineOfLogMessage,
+      debuggingMessage,
       insertEmptyLineBeforeLogMessage,
       insertEmptyLineAfterLogMessage,
     );
@@ -248,7 +260,7 @@ export class JSDebugMessage extends DebugMessage {
   logMessage(
     document: TextDocument,
     selectionLine: number,
-    selectedVar: string,
+    selectedVariable: string,
   ): LogMessage {
     const currentLineText: string = document.lineAt(selectionLine).text;
     const multilineParenthesisVariable = getMultiLineContextVariable(
@@ -261,7 +273,7 @@ export class JSDebugMessage extends DebugMessage {
       selectionLine,
       BracketType.CURLY_BRACES,
     );
-    const logMsgTypesChecks: {
+    const logMessageTypesChecks: {
       [key in LogMessageType]: () => {
         isChecked: boolean;
         metadata?: Pick<LogMessage, 'metadata'>;
@@ -277,7 +289,7 @@ export class JSDebugMessage extends DebugMessage {
         let nextLineIndex = selectionLine + 1;
         let nextLineText = document
           .lineAt(nextLineIndex)
-          .text.replace(/\s/g, '');
+          .text.replaceAll(/\s/g, '');
 
         // Skip comment-only lines
         while (
@@ -295,7 +307,7 @@ export class JSDebugMessage extends DebugMessage {
               }
               nextLineText = document
                 .lineAt(nextLineIndex)
-                .text.replace(/\s/g, '');
+                .text.replaceAll(/\s/g, '');
             }
             nextLineIndex++;
           } else {
@@ -307,7 +319,9 @@ export class JSDebugMessage extends DebugMessage {
               isChecked: false,
             };
           }
-          nextLineText = document.lineAt(nextLineIndex).text.replace(/\s/g, '');
+          nextLineText = document
+            .lineAt(nextLineIndex)
+            .text.replaceAll(/\s/g, '');
         }
 
         const combinedText = `${currentLineText}${nextLineText}`;
@@ -321,7 +335,7 @@ export class JSDebugMessage extends DebugMessage {
 
       [LogMessageType.Decorator]: () => {
         return {
-          isChecked: /^@[a-zA-Z0-9]{1,}(.*)[a-zA-Z0-9]{1,}/.test(
+          isChecked: /^@[\dA-Za-z]+(.*)[\dA-Za-z]+/.test(
             currentLineText.trim(),
           ),
         };
@@ -348,7 +362,7 @@ export class JSDebugMessage extends DebugMessage {
           const deepObjectProperty = this.deepObjectProperty(
             document,
             multilineBracesVariable.openingContextLine,
-            selectedVar,
+            selectedVariable,
           );
           if (deepObjectProperty) {
             const multilineBracesObjectScope = getMultiLineContextVariable(
@@ -430,7 +444,7 @@ export class JSDebugMessage extends DebugMessage {
         }
         const nextLineText: string = document
           .lineAt(selectionLine + 1)
-          .text.replace(/\s/g, '');
+          .text.replaceAll(/\s/g, '');
         return {
           isChecked:
             this.lineCodeProcessing.isObjectFunctionCall(
@@ -479,7 +493,9 @@ export class JSDebugMessage extends DebugMessage {
 
     for (const { logMessageType } of logMessageTypeVerificationPriority) {
       const { isChecked, metadata } =
-        logMsgTypesChecks[logMessageType as keyof typeof logMsgTypesChecks]();
+        logMessageTypesChecks[
+          logMessageType as keyof typeof logMessageTypesChecks
+        ]();
       if (logMessageType !== LogMessageType.PrimitiveAssignment && isChecked) {
         return {
           logMessageType,
@@ -493,89 +509,93 @@ export class JSDebugMessage extends DebugMessage {
   }
   enclosingBlockName(
     document: TextDocument,
-    lineOfSelectedVar: number,
+    lineOfSelectedVariable: number,
     blockType: BlockType,
   ): string {
-    let currentLineNum: number = lineOfSelectedVar;
-    while (currentLineNum >= 0) {
-      const currentLineText: string = document.lineAt(currentLineNum).text;
+    let currentLineNumber: number = lineOfSelectedVariable;
+    while (currentLineNumber >= 0) {
+      const currentLineText: string = document.lineAt(currentLineNumber).text;
       switch (blockType) {
-        case 'class':
+        case 'class': {
           if (
-            this.lineCodeProcessing.doesContainClassDeclaration(currentLineText)
+            this.lineCodeProcessing.doesContainClassDeclaration(
+              currentLineText,
+            ) &&
+            lineOfSelectedVariable > currentLineNumber &&
+            lineOfSelectedVariable <
+              closingContextLine(
+                document,
+                currentLineNumber,
+                BracketType.CURLY_BRACES,
+              )
           ) {
-            if (
-              lineOfSelectedVar > currentLineNum &&
-              lineOfSelectedVar <
-                closingContextLine(
-                  document,
-                  currentLineNum,
-                  BracketType.CURLY_BRACES,
-                )
-            ) {
-              return `${this.lineCodeProcessing.getClassName(currentLineText)}`;
-            }
+            return `${this.lineCodeProcessing.getClassName(currentLineText)}`;
           }
           break;
-        case 'function':
+        }
+        case 'function': {
           if (
             this.lineCodeProcessing.doesContainsNamedFunctionDeclaration(
               currentLineText,
             ) &&
             !this.lineCodeProcessing.doesContainsBuiltInFunction(
               currentLineText,
-            )
+            ) &&
+            lineOfSelectedVariable >= currentLineNumber &&
+            lineOfSelectedVariable <
+              closingContextLine(
+                document,
+                currentLineNumber,
+                BracketType.CURLY_BRACES,
+              )
           ) {
             if (
-              lineOfSelectedVar >= currentLineNum &&
-              lineOfSelectedVar <
-                closingContextLine(
-                  document,
-                  currentLineNum,
-                  BracketType.CURLY_BRACES,
-                )
+              this.lineCodeProcessing.getFunctionName(currentLineText).length >
+              0
             ) {
-              if (
-                this.lineCodeProcessing.getFunctionName(currentLineText)
-                  .length !== 0
-              ) {
-                return `${this.lineCodeProcessing.getFunctionName(
-                  currentLineText,
-                )}`;
-              }
-              return '';
+              return `${this.lineCodeProcessing.getFunctionName(
+                currentLineText,
+              )}`;
             }
+            return '';
           }
           break;
+        }
       }
-      currentLineNum--;
+      currentLineNumber--;
     }
     return '';
   }
   detectAll(document: TextDocument, logFunction: string): Message[] {
     const documentNbrOfLines: number = document.lineCount;
     const logMessages: Message[] = [];
-    for (let i = 0; i < documentNbrOfLines; i++) {
+    for (let index = 0; index < documentNbrOfLines; index++) {
       const emojiConsoleLogMessage = new RegExp(
-        logFunction.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
+        logFunction.replaceAll(/[$()*+.?[\\\]^{|}]/g, String.raw`\$&`),
       );
-      if (emojiConsoleLogMessage.test(document.lineAt(i).text)) {
+      if (emojiConsoleLogMessage.test(document.lineAt(index).text)) {
         const logMessage: Message = {
           spaces: '',
           lines: [],
         };
-        logMessage.spaces = this.spacesBeforeLogMsg(document, i, i);
+        logMessage.spaces = this.spacesBeforeLogMsg(document, index, index);
         const closedParenthesisLine = closingContextLine(
           document,
-          i,
+          index,
           BracketType.PARENTHESIS,
         );
-        let msg = '';
-        for (let j = i; j <= closedParenthesisLine; j++) {
-          msg += document.lineAt(j).text;
-          logMessage.lines.push(document.lineAt(j).rangeIncludingLineBreak);
+        let message = '';
+        for (
+          let lineIndex = index;
+          lineIndex <= closedParenthesisLine;
+          lineIndex++
+        ) {
+          message += document.lineAt(lineIndex).text;
+          logMessage.lines.push(
+            document.lineAt(lineIndex).rangeIncludingLineBreak,
+          );
         }
-        if (new RegExp(emojis.join('|')).test(msg)) {
+        if (new RegExp(emojis.join('|')).test(message)) {
           logMessages.push(logMessage);
         }
       }

@@ -1,12 +1,5 @@
-import { openDocument } from './openDocument';
-import { NaturalEditorPosition } from './NaturalEditorPosition';
-import { naturalEditorLine } from './naturalEditorLine';
-import { expectActiveTextEditorWithFile } from './expectActiveTextEditorWithFile';
-import { documentLinesChanged } from './documentLinesChanged';
-export {
-  openDocument,
-  NaturalEditorPosition,
-  naturalEditorLine,
-  expectActiveTextEditorWithFile,
-  documentLinesChanged,
-};
+export { openDocument } from './openDocument';
+export { NaturalEditorPosition } from './NaturalEditorPosition';
+export { naturalEditorLine } from './naturalEditorLine';
+export { expectActiveTextEditorWithFile } from './expectActiveTextEditorWithFile';
+export { documentLinesChanged } from './documentLinesChanged';

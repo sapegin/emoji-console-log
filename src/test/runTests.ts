@@ -1,4 +1,7 @@
-import * as path from 'path';
+/* eslint-disable unicorn/prefer-top-level-await */
+/* eslint-disable unicorn/prefer-module */
+
+import path from 'node:path';
 
 import { runTests } from 'vscode-test';
 
@@ -14,7 +17,7 @@ async function main() {
 
     // Download VS Code, unzip it and run the integration test
     await runTests({ extensionDevelopmentPath, extensionTestsPath });
-  } catch (err) {
+  } catch {
     console.error('Failed to run tests');
     process.exit(1);
   }

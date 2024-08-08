@@ -1,5 +1,7 @@
+/* eslint-disable unicorn/prefer-module */
+
 import * as vscode from 'vscode';
-import * as path from 'path';
+import path from 'node:path';
 
 export const openDocument = async (
   programmingLanguage: string,

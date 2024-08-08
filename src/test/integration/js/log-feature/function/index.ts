@@ -1,22 +1,22 @@
 import { describe } from 'mocha';
 
 import anonymousFunctionsTest from './anonymousFunctions';
-import emptyFuncTest from './emptyFunc';
+import emptyFunctionTest from './emptyFunctions';
 import functionAssignedToVariableTest from './functionAssignedToVariable';
 import functionMultiLineParametersTest from './functionMultiLineParameters';
-import functionParamTest from './functionParam';
+import functionParameterTest from './functionParameters';
 import functionWithDecoratorsTest from './functionWithDecorators';
-import oneLineFunctionParamTest from './oneLineFunctionParam';
+import oneLineFunctionParameterTest from './oneLineFunctionParameters';
 import promiseAnonymousFunctionTest from './promiseAnonymousFunction';
 export default (): void => {
   describe('Function Context', () => {
     anonymousFunctionsTest();
-    emptyFuncTest();
+    emptyFunctionTest();
     functionAssignedToVariableTest();
     functionMultiLineParametersTest();
-    functionParamTest();
+    functionParameterTest();
     functionWithDecoratorsTest();
-    oneLineFunctionParamTest();
+    oneLineFunctionParameterTest();
     promiseAnonymousFunctionTest();
   });
 };

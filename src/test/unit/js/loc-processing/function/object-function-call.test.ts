@@ -27,13 +27,13 @@ export default (): void => {
         `this.subscription = this.userService.currentUser.subscribe(`,
         `this.subscription.add(`,
       ];
-      objectFunctionCallLOCs.forEach((objectFunctionCallLOC) => {
+      for (const objectFunctionCallLOC of objectFunctionCallLOCs) {
         expect(
           helpers.jsLineCodeProcessing.isObjectFunctionCall(
             objectFunctionCallLOC,
           ),
         ).to.equal(true);
-      });
+      }
     });
     it('Should return false if the LOC is not an object function call', () => {
       const functionsAssignmentsLOCs = [
@@ -53,13 +53,13 @@ export default (): void => {
               return 'hello';
             }`,
       ];
-      functionsAssignmentsLOCs.forEach((functionsAssignmentsLOC) => {
+      for (const functionsAssignmentsLOC of functionsAssignmentsLOCs) {
         expect(
           helpers.jsLineCodeProcessing.isObjectFunctionCall(
             functionsAssignmentsLOC,
           ),
         ).to.equal(false);
-      });
+      }
     });
   });
 };

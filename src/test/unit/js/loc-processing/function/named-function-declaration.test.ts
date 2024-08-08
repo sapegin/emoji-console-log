@@ -32,13 +32,13 @@ export default (): void => {
       '  unitsValidation( scriptId ): any[] {',
     ];
     it('Should return true when LOC contains named function declaration', () => {
-      namedFunctionsLOCs.forEach((namedFunctionLOC) => {
+      for (const namedFunctionLOC of namedFunctionsLOCs) {
         expect(
           helpers.jsLineCodeProcessing.doesContainsNamedFunctionDeclaration(
             namedFunctionLOC,
           ),
         ).to.equal(true);
-      });
+      }
     });
     it("Should return false LOC doesn't contains named function declaration", () => {
       const nonNamedFunctionsLOCs = [
@@ -50,13 +50,13 @@ export default (): void => {
         'function( {',
         'function) {',
       ];
-      nonNamedFunctionsLOCs.forEach((nonNamedFunctionLOC) => {
+      for (const nonNamedFunctionLOC of nonNamedFunctionsLOCs) {
         expect(
           helpers.jsLineCodeProcessing.doesContainsNamedFunctionDeclaration(
             nonNamedFunctionLOC,
           ),
         ).to.equal(false);
-      });
+      }
     });
   });
 };

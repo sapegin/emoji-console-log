@@ -6,6 +6,6 @@ export type Command = {
   handler: (
     extensionProperties: ExtensionProperties,
     debugMessage: DebugMessage,
-    args?: unknown[],
+    commandArguments?: unknown[],
   ) => Promise<void>;
 };

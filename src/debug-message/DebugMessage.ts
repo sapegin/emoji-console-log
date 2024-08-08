@@ -22,65 +22,64 @@ export abstract class DebugMessage {
   abstract logMessage(
     document: TextDocument,
     selectionLine: number,
-    selectedVar: string,
+    selectedVariable: string,
   ): LogMessage;
   abstract msg(
     textEditor: TextEditorEdit,
     document: TextDocument,
-    selectedVar: string,
-    lineOfSelectedVar: number,
+    selectedVariable: string,
+    lineOfSelectedVariable: number,
     style: CodeStyle,
     extensionProperties: ExtensionProperties,
   ): void;
   abstract detectAll(document: TextDocument, logFunction: string): Message[];
   abstract enclosingBlockName(
     document: TextDocument,
-    lineOfSelectedVar: number,
+    lineOfSelectedVariable: number,
     blockType: BlockType,
   ): string;
   line(
     document: TextDocument,
     selectionLine: number,
-    selectedVar: string,
-    logMsg: LogMessage,
+    selectedVariable: string,
+    logMessage: LogMessage,
   ): number {
     return this.debugMessageLine.line(
       document,
       selectionLine,
-      selectedVar,
-      logMsg,
+      selectedVariable,
+      logMessage,
     );
   }
   spacesBeforeLogMsg(
     document: TextDocument,
-    selectedVarLine: number,
-    logMsgLine: number,
+    selectedVariableLine: number,
+    logMessageLine: number,
   ): string {
-    const selectedVarTextLine = document.lineAt(selectedVarLine);
-    const selectedVarTextLineFirstNonWhitespaceCharacterIndex =
-      selectedVarTextLine.firstNonWhitespaceCharacterIndex;
-    const spacesBeforeSelectedVarLine = selectedVarTextLine.text
-      .split('')
-      .splice(0, selectedVarTextLineFirstNonWhitespaceCharacterIndex)
+    const selectedVariableTextLine = document.lineAt(selectedVariableLine);
+    const selectedVariableTextLineFirstNonWhitespaceCharacterIndex =
+      selectedVariableTextLine.firstNonWhitespaceCharacterIndex;
+    const spacesBeforeSelectedVariableLine = [...selectedVariableTextLine.text]
+      .splice(0, selectedVariableTextLineFirstNonWhitespaceCharacterIndex)
       .reduce(
         (previousValue, currentValue) => previousValue + currentValue,
         '',
       );
-    if (logMsgLine < document.lineCount) {
-      const logMsgTextLine = document.lineAt(logMsgLine);
-      const logMsgTextLineFirstNonWhitespaceCharacterIndex =
-        logMsgTextLine.firstNonWhitespaceCharacterIndex;
-      const spacesBeforeLogMsgLine = logMsgTextLine.text
-        .split('')
-        .splice(0, logMsgTextLineFirstNonWhitespaceCharacterIndex)
+    if (logMessageLine < document.lineCount) {
+      const logMessageTextLine = document.lineAt(logMessageLine);
+      const logMessageTextLineFirstNonWhitespaceCharacterIndex =
+        logMessageTextLine.firstNonWhitespaceCharacterIndex;
+      const spacesBeforeLogMessageLine = [...logMessageTextLine.text]
+        .splice(0, logMessageTextLineFirstNonWhitespaceCharacterIndex)
         .reduce(
           (previousValue, currentValue) => previousValue + currentValue,
           '',
         );
-      return spacesBeforeSelectedVarLine.length > spacesBeforeLogMsgLine.length
-        ? spacesBeforeSelectedVarLine
-        : spacesBeforeLogMsgLine;
+      return spacesBeforeSelectedVariableLine.length >
+        spacesBeforeLogMessageLine.length
+        ? spacesBeforeSelectedVariableLine
+        : spacesBeforeLogMessageLine;
     }
-    return spacesBeforeSelectedVarLine;
+    return spacesBeforeSelectedVariableLine;
   }
 }

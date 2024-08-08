@@ -6,15 +6,14 @@ export const documentLinesChanged = (
   return lines.map((line) => {
     return new Promise<void>((resolve) => {
       const disposable = vscode.workspace.onDidChangeTextDocument((event) => {
-        if (event.document === textDocument && event.contentChanges.length) {
-          if (
-            event.contentChanges.some(
-              (change) => change.range.start.line === line,
-            )
-          ) {
-            disposable.dispose();
-            resolve();
-          }
+        if (
+          event.document === textDocument &&
+          event.contentChanges.some(
+            (change) => change.range.start.line === line,
+          )
+        ) {
+          disposable.dispose();
+          resolve();
         }
       });
     });

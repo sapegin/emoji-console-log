@@ -5,12 +5,12 @@ import { closingContextLine } from './closingContextLine';
 
 export function getMultiLineContextVariable(
   document: TextDocument,
-  lineNum: number,
+  lineNumber: number,
   bracketType: BracketType,
   innerScope = true,
-): MultilineContextVariable | null {
+): MultilineContextVariable | undefined {
   const { openingBrackets, closingBrackets } = locBrackets(
-    document.lineAt(lineNum).text,
+    document.lineAt(lineNumber).text,
     bracketType,
   );
   if (
@@ -18,33 +18,33 @@ export function getMultiLineContextVariable(
     openingBrackets !== 0 &&
     openingBrackets === closingBrackets
   ) {
-    return null;
+    return undefined;
   }
-  let currentLineNum = lineNum - 1;
+  let currentLineNumber = lineNumber - 1;
   let nbrOfOpenedBlockType = 0;
   let nbrOfClosedBlockType = 1; // Closing parenthesis
-  while (currentLineNum >= 0) {
-    const currentLineText: string = document.lineAt(currentLineNum).text;
+  while (currentLineNumber >= 0) {
+    const currentLineText: string = document.lineAt(currentLineNumber).text;
     const currentLineParenthesis = locBrackets(currentLineText, bracketType);
     nbrOfOpenedBlockType += currentLineParenthesis.openingBrackets;
     nbrOfClosedBlockType += currentLineParenthesis.closingBrackets;
     if (nbrOfOpenedBlockType === nbrOfClosedBlockType) {
       return {
-        openingContextLine: currentLineNum,
+        openingContextLine: currentLineNumber,
         closingContextLine: closingContextLine(
           document,
-          currentLineNum,
+          currentLineNumber,
           bracketType,
         ),
       };
     }
-    currentLineNum--;
+    currentLineNumber--;
   }
   if (bracketType === BracketType.PARENTHESIS && openingBrackets > 0) {
     return {
-      openingContextLine: lineNum,
-      closingContextLine: closingContextLine(document, lineNum, bracketType),
+      openingContextLine: lineNumber,
+      closingContextLine: closingContextLine(document, lineNumber, bracketType),
     };
   }
-  return null;
+  return undefined;
 }

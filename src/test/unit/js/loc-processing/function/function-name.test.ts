@@ -102,11 +102,11 @@ export default (): void => {
           expectedFunctionName: 'unitsValidation',
         },
       ];
-      namedFunctionsLOCs.forEach(({ loc, expectedFunctionName }) => {
+      for (const { loc, expectedFunctionName } of namedFunctionsLOCs) {
         expect(helpers.jsLineCodeProcessing.getFunctionName(loc)).to.equal(
           expectedFunctionName,
         );
-      });
+      }
     });
   });
 };

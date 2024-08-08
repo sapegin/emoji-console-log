@@ -7,8 +7,7 @@ export function spacesBeforeLine(
   const textLine = document.lineAt(lineNumber);
   const lineFirstNonWhitespaceCharacterIndex =
     textLine.firstNonWhitespaceCharacterIndex;
-  return textLine.text
-    .split('')
+  return [...textLine.text]
     .splice(0, lineFirstNonWhitespaceCharacterIndex)
     .reduce((previousValue, currentValue) => previousValue + currentValue, '');
 }

@@ -10,11 +10,11 @@ export default (): void => {
         `class HelloWorld{`,
         `class HelloWorld { `,
       ];
-      classLOCs.forEach((classLOC) => {
+      for (const classLOC of classLOCs) {
         expect(
           helpers.jsLineCodeProcessing.doesContainClassDeclaration(classLOC),
         ).to.equal(true);
-      });
+      }
     });
     it('Should return false for non-class declaration LOCs', () => {
       const nonClassLOCs = [
@@ -32,11 +32,11 @@ export default (): void => {
                       };`,
         `function classicMoves() {`,
       ];
-      nonClassLOCs.forEach((nonClassLOC) => {
+      for (const nonClassLOC of nonClassLOCs) {
         expect(
           helpers.jsLineCodeProcessing.doesContainClassDeclaration(nonClassLOC),
         ).to.equal(false);
-      });
+      }
     });
   });
 };

@@ -13,17 +13,17 @@ export class JSDebugMessageAnonymous {
     this.lineCodeProcessing = lineCodeProcessing;
   }
   isAnonymousFunctionContext(
-    selectedVar: string,
-    selectedVarLineLoc: string,
+    selectedVariable: string,
+    selectedVariableLineLoc: string,
   ): boolean {
     return (
-      this.lineCodeProcessing.isAnonymousFunction(selectedVarLineLoc) &&
+      this.lineCodeProcessing.isAnonymousFunction(selectedVariableLineLoc) &&
       this.lineCodeProcessing.isArgumentOfAnonymousFunction(
-        selectedVarLineLoc,
-        selectedVar,
+        selectedVariableLineLoc,
+        selectedVariable,
       ) &&
       this.lineCodeProcessing.shouldTransformAnonymousFunction(
-        selectedVarLineLoc,
+        selectedVariableLineLoc,
       )
     );
   }
@@ -32,50 +32,53 @@ export class JSDebugMessageAnonymous {
     document: TextDocument,
     textEditor: TextEditorEdit,
     style: CodeStyle,
-    selectedPropLine: TextLine,
-    debuggingMsg: string,
+    selectedPropertyLine: TextLine,
+    debuggingMessage: string,
   ): void {
-    const selectedVarPropLoc = selectedPropLine.text;
-    const anonymousFunctionLeftPart = selectedVarPropLoc.split('=>')[0].trim();
-    const anonymousFunctionRightPart = selectedVarPropLoc
+    const selectedVariablePropertyLoc = selectedPropertyLine.text;
+    const anonymousFunctionLeftPart = selectedVariablePropertyLoc
+      .split('=>')[0]
+      .trim();
+    const anonymousFunctionRightPart = selectedVariablePropertyLoc
       .split('=>')[1]
       .replace(style.semicolon, '')
       .trim()
       .replace(/\)\s*;?$/, '');
-    const spacesBeforeSelectedVarLine = spacesBeforeLine(
+    const spacesBeforeSelectedVariableLine = spacesBeforeLine(
       document,
-      selectedPropLine.lineNumber,
+      selectedPropertyLine.lineNumber,
     );
-    const spacesBeforeLinesToInsert = `${spacesBeforeSelectedVarLine}${style.tab}`;
-    const isCalledInsideFunction = /\)\s*;?$/.test(selectedVarPropLoc);
+    const spacesBeforeLinesToInsert = `${spacesBeforeSelectedVariableLine}${style.tab}`;
+    const isCalledInsideFunction = /\)\s*;?$/.test(selectedVariablePropertyLoc);
     const isNextLineCallToOtherFunction = document
-      .lineAt(selectedPropLine.lineNumber + 1)
+      .lineAt(selectedPropertyLine.lineNumber + 1)
       .text.trim()
       .startsWith('.');
     const anonymousFunctionClosedParenthesisLine = closingContextLine(
       document,
-      selectedPropLine.lineNumber,
+      selectedPropertyLine.lineNumber,
       BracketType.PARENTHESIS,
     );
     const isReturnBlockMultiLine =
-      anonymousFunctionClosedParenthesisLine - selectedPropLine.lineNumber !==
+      anonymousFunctionClosedParenthesisLine -
+        selectedPropertyLine.lineNumber !==
       0;
 
-    textEditor.delete(selectedPropLine.range);
+    textEditor.delete(selectedPropertyLine.range);
     textEditor.insert(
-      new Position(selectedPropLine.lineNumber, 0),
-      `${spacesBeforeSelectedVarLine}${anonymousFunctionLeftPart} => {\n`,
+      new Position(selectedPropertyLine.lineNumber, 0),
+      `${spacesBeforeSelectedVariableLine}${anonymousFunctionLeftPart} => {\n`,
     );
     if (isReturnBlockMultiLine) {
       textEditor.insert(
-        new Position(selectedPropLine.lineNumber, 0),
-        `${spacesBeforeLinesToInsert}${debuggingMsg}\n`,
+        new Position(selectedPropertyLine.lineNumber, 0),
+        `${spacesBeforeLinesToInsert}${debuggingMessage}\n`,
       );
-      let currentLine = document.lineAt(selectedPropLine.lineNumber + 1);
+      let currentLine = document.lineAt(selectedPropertyLine.lineNumber + 1);
       do {
         textEditor.delete(currentLine.range);
         const addReturnKeyword =
-          currentLine.lineNumber === selectedPropLine.lineNumber + 1;
+          currentLine.lineNumber === selectedPropertyLine.lineNumber + 1;
         const spacesBeforeCurrentLine = spacesBeforeLine(
           document,
           currentLine.lineNumber,
@@ -106,28 +109,28 @@ export class JSDebugMessageAnonymous {
       );
       textEditor.insert(
         new Position(anonymousFunctionClosedParenthesisLine + 1, 0),
-        `${spacesBeforeSelectedVarLine}}${
+        `${spacesBeforeSelectedVariableLine}}${
           style.semicolon && !isReturnBlockMultiLine ? style.semicolon : ''
         })\n`,
       );
     } else {
       const nextLineText = document.lineAt(
-        selectedPropLine.lineNumber + 1,
+        selectedPropertyLine.lineNumber + 1,
       ).text;
       const nextLineIsEndWithinTheMainFunction = /^\)/.test(
         nextLineText.trim(),
       );
       textEditor.insert(
-        new Position(selectedPropLine.lineNumber, 0),
-        `${spacesBeforeLinesToInsert}${debuggingMsg}\n\n`,
+        new Position(selectedPropertyLine.lineNumber, 0),
+        `${spacesBeforeLinesToInsert}${debuggingMessage}\n\n`,
       );
       textEditor.insert(
-        new Position(selectedPropLine.lineNumber, 0),
+        new Position(selectedPropertyLine.lineNumber, 0),
         `${spacesBeforeLinesToInsert}return ${anonymousFunctionRightPart}${style.semicolon}\n`,
       );
       textEditor.insert(
-        new Position(selectedPropLine.lineNumber, 0),
-        `${spacesBeforeSelectedVarLine}}${isCalledInsideFunction ? ')' : ''}${
+        new Position(selectedPropertyLine.lineNumber, 0),
+        `${spacesBeforeSelectedVariableLine}}${isCalledInsideFunction ? ')' : ''}${
           style.semicolon &&
           !isNextLineCallToOtherFunction &&
           !nextLineIsEndWithinTheMainFunction

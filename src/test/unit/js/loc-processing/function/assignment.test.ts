@@ -23,13 +23,13 @@ export default (): void => {
             }`,
         'onDragStart={(start: DragStart, provided: ResponderProvided) => {',
       ];
-      functionsAssignmentsLOCs.forEach((functionsAssignmentsLOC) => {
+      for (const functionsAssignmentsLOC of functionsAssignmentsLOCs) {
         expect(
           helpers.jsLineCodeProcessing.isFunctionAssignedToVariable(
             functionsAssignmentsLOC,
           ),
         ).to.equal(true);
-      });
+      }
     });
   });
 };

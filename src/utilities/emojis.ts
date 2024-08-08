@@ -50,7 +50,7 @@ export const emojis = [
 function randomNoRepeats(array: string[]) {
   let copy = [...array];
   return () => {
-    if (copy.length < 1) {
+    if (copy.length === 0) {
       copy = [...array];
     }
     const index = Math.floor(Math.random() * copy.length);

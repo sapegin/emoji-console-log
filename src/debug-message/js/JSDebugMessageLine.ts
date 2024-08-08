@@ -17,19 +17,21 @@ export class JSDebugMessageLine implements DebugMessageLine {
   line(
     document: TextDocument,
     selectionLine: number,
-    selectedVar: string,
-    logMsg: LogMessage,
+    selectedVariable: string,
+    logMessage: LogMessage,
   ): number {
-    switch (logMsg.logMessageType) {
-      case LogMessageType.ObjectLiteral:
+    switch (logMessage.logMessageType) {
+      case LogMessageType.ObjectLiteral: {
         return this.objectLiteralLine(document, selectionLine);
-      case LogMessageType.NamedFunctionAssignment:
+      }
+      case LogMessageType.NamedFunctionAssignment: {
         return this.functionAssignmentLine(
           document,
           selectionLine,
-          selectedVar,
+          selectedVariable,
         );
-      case LogMessageType.Decorator:
+      }
+      case LogMessageType.Decorator: {
         return (
           (getMultiLineContextVariable(
             document,
@@ -38,7 +40,8 @@ export class JSDebugMessageLine implements DebugMessageLine {
             false,
           )?.closingContextLine || selectionLine) + 1
         );
-      case LogMessageType.MultiLineAnonymousFunction:
+      }
+      case LogMessageType.MultiLineAnonymousFunction: {
         return (
           this.functionClosedLine(
             document,
@@ -46,31 +49,38 @@ export class JSDebugMessageLine implements DebugMessageLine {
             BracketType.CURLY_BRACES,
           ) + 1
         );
-      case LogMessageType.ObjectFunctionCallAssignment:
+      }
+      case LogMessageType.ObjectFunctionCallAssignment: {
         return this.objectFunctionCallLine(
           document,
           selectionLine,
-          selectedVar,
+          selectedVariable,
         );
-      case LogMessageType.ArrayAssignment:
+      }
+      case LogMessageType.ArrayAssignment: {
         return this.arrayLine(document, selectionLine);
-      case LogMessageType.MultilineParenthesis:
+      }
+      case LogMessageType.MultilineParenthesis: {
         return (
-          ((logMsg?.metadata as LogContextMetadata)?.closingContextLine ||
+          ((logMessage?.metadata as LogContextMetadata)?.closingContextLine ||
             selectionLine) + 1
         );
-      case LogMessageType.Ternary:
+      }
+      case LogMessageType.Ternary: {
         return this.templateStringLine(document, selectionLine);
-      case LogMessageType.MultilineBraces:
+      }
+      case LogMessageType.MultilineBraces: {
         // Deconstructing assignment
-        if ((logMsg?.metadata as LogContextMetadata)?.closingContextLine) {
+        if ((logMessage?.metadata as LogContextMetadata)?.closingContextLine) {
           return (
-            (logMsg?.metadata as LogContextMetadata)?.closingContextLine + 1
+            (logMessage?.metadata as LogContextMetadata)?.closingContextLine + 1
           );
         }
         return selectionLine + 1;
-      default:
+      }
+      default: {
         return selectionLine + 1;
+      }
     }
   }
   private objectLiteralLine(
@@ -82,29 +92,32 @@ export class JSDebugMessageLine implements DebugMessageLine {
       .length;
     let nbrOfClosedBrackets: number = (currentLineText.match(/}/g) || [])
       .length;
-    let currentLineNum: number = selectionLine + 1;
-    while (currentLineNum < document.lineCount) {
-      const line = document.lineAt(currentLineNum).text;
+    let currentLineNumber: number = selectionLine + 1;
+    while (currentLineNumber < document.lineCount) {
+      const line = document.lineAt(currentLineNumber).text;
       nbrOfOpenedBrackets += (line.match(/{/g) || []).length;
       nbrOfClosedBrackets += (line.match(/}/g) || []).length;
-      currentLineNum++;
+      currentLineNumber++;
       if (nbrOfOpenedBrackets === nbrOfClosedBrackets) {
         break;
       }
     }
     return nbrOfClosedBrackets === nbrOfOpenedBrackets
-      ? currentLineNum
+      ? currentLineNumber
       : selectionLine + 1;
   }
   private functionAssignmentLine(
     document: TextDocument,
     selectionLine: number,
-    selectedVar: string,
+    selectedVariable: string,
   ): number {
     const currentLineText = document.lineAt(selectionLine).text;
     if (/{/.test(currentLineText)) {
       if (
-        document.lineAt(selectionLine).text.split('=')[1].includes(selectedVar)
+        document
+          .lineAt(selectionLine)
+          .text.split('=')[1]
+          .includes(selectedVariable)
       ) {
         return selectionLine + 1;
       }
@@ -158,15 +171,15 @@ export class JSDebugMessageLine implements DebugMessageLine {
   private objectFunctionCallLine(
     document: TextDocument,
     selectionLine: number,
-    selectedVar: string,
+    selectedVariable: string,
   ): number {
     let currentLineText: string = document.lineAt(selectionLine).text;
     let nextLineText: string = document
       .lineAt(selectionLine + 1)
-      .text.replace(/\s/g, '');
+      .text.replaceAll(/\s/g, '');
     if (
-      /\((\s*)$/.test(currentLineText.split(selectedVar)[0]) ||
-      /,(\s*)$/.test(currentLineText.split(selectedVar)[0])
+      /\((\s*)$/.test(currentLineText.split(selectedVariable)[0]) ||
+      /,(\s*)$/.test(currentLineText.split(selectedVariable)[0])
     ) {
       return selectionLine + 1;
     }
@@ -178,25 +191,25 @@ export class JSDebugMessageLine implements DebugMessageLine {
     );
     totalOpenedParenthesis += occurrences.openedElementOccurrences;
     totalClosedParenthesis += occurrences.closedElementOccurrences;
-    let currentLineNum = selectionLine + 1;
+    let currentLineNumber = selectionLine + 1;
     if (
       totalOpenedParenthesis !== totalClosedParenthesis ||
       currentLineText.endsWith('.') ||
       nextLineText.trim().startsWith('.')
     ) {
-      while (currentLineNum < document.lineCount) {
-        currentLineText = document.lineAt(currentLineNum).text;
+      while (currentLineNumber < document.lineCount) {
+        currentLineText = document.lineAt(currentLineNumber).text;
         const lineOccurrences = this.locOpenedClosedElementOccurrences(
           currentLineText,
           BracketType.PARENTHESIS,
         );
         totalOpenedParenthesis += lineOccurrences.openedElementOccurrences;
         totalClosedParenthesis += lineOccurrences.closedElementOccurrences;
-        if (currentLineNum === document.lineCount - 1) {
+        if (currentLineNumber === document.lineCount - 1) {
           break;
         }
-        nextLineText = document.lineAt(currentLineNum + 1).text;
-        currentLineNum++;
+        nextLineText = document.lineAt(currentLineNumber + 1).text;
+        currentLineNumber++;
         if (
           totalOpenedParenthesis === totalClosedParenthesis &&
           !currentLineText.endsWith('.') &&
@@ -207,29 +220,29 @@ export class JSDebugMessageLine implements DebugMessageLine {
       }
     }
     return totalOpenedParenthesis === totalClosedParenthesis
-      ? currentLineNum
+      ? currentLineNumber
       : selectionLine + 1;
   }
   private arrayLine(document: TextDocument, selectionLine: number): number {
     const currentLineText: string = document.lineAt(selectionLine).text;
     let nbrOfOpenedBrackets: number = (currentLineText.match(/\[/g) || [])
       .length;
-    let nbrOfClosedBrackets: number = (currentLineText.match(/\]/g) || [])
+    let nbrOfClosedBrackets: number = (currentLineText.match(/]/g) || [])
       .length;
-    let currentLineNum: number = selectionLine + 1;
+    let currentLineNumber: number = selectionLine + 1;
     if (nbrOfOpenedBrackets !== nbrOfClosedBrackets) {
-      while (currentLineNum < document.lineCount) {
-        const line = document.lineAt(currentLineNum).text;
+      while (currentLineNumber < document.lineCount) {
+        const line = document.lineAt(currentLineNumber).text;
         nbrOfOpenedBrackets += (line.match(/\[/g) || []).length;
-        nbrOfClosedBrackets += (line.match(/\]/g) || []).length;
-        currentLineNum++;
+        nbrOfClosedBrackets += (line.match(/]/g) || []).length;
+        currentLineNumber++;
         if (nbrOfOpenedBrackets === nbrOfClosedBrackets) {
           break;
         }
       }
     }
     return nbrOfOpenedBrackets === nbrOfClosedBrackets
-      ? currentLineNum
+      ? currentLineNumber
       : selectionLine + 1;
   }
   private templateStringLine(
@@ -237,17 +250,17 @@ export class JSDebugMessageLine implements DebugMessageLine {
     selectionLine: number,
   ): number {
     const currentLineText: string = document.lineAt(selectionLine).text;
-    let currentLineNum: number = selectionLine + 1;
+    let currentLineNumber: number = selectionLine + 1;
     let nbrOfBackticks: number = (currentLineText.match(/`/g) || []).length;
-    while (currentLineNum < document.lineCount) {
-      const line = document.lineAt(currentLineNum).text;
+    while (currentLineNumber < document.lineCount) {
+      const line = document.lineAt(currentLineNumber).text;
       nbrOfBackticks += (line.match(/`/g) || []).length;
       if (nbrOfBackticks % 2 === 0) {
         break;
       }
-      currentLineNum++;
+      currentLineNumber++;
     }
-    return nbrOfBackticks % 2 === 0 ? currentLineNum + 1 : selectionLine + 1;
+    return nbrOfBackticks % 2 === 0 ? currentLineNumber + 1 : selectionLine + 1;
   }
   locOpenedClosedElementOccurrences(
     loc: string,
@@ -259,10 +272,10 @@ export class JSDebugMessageLine implements DebugMessageLine {
       bracketType === BracketType.PARENTHESIS ? /\(/g : /{/g;
     const closedElement: RegExp =
       bracketType === BracketType.PARENTHESIS ? /\)/g : /}/g;
-    while (openedElement.exec(loc)) {
+    while (openedElement.test(loc)) {
       openedElementOccurrences++;
     }
-    while (closedElement.exec(loc)) {
+    while (closedElement.test(loc)) {
       closedElementOccurrences++;
     }
     return {
@@ -272,15 +285,15 @@ export class JSDebugMessageLine implements DebugMessageLine {
   }
   closingElementLine(
     document: TextDocument,
-    lineNum: number,
+    lineNumber: number,
     bracketType: BracketType,
   ): number {
-    const docNbrOfLines: number = document.lineCount;
+    const documentNbrOfLines: number = document.lineCount;
     let closingElementFound = false;
     let openedElementOccurrences = 0;
     let closedElementOccurrences = 0;
-    while (!closingElementFound && lineNum < docNbrOfLines - 1) {
-      const currentLineText: string = document.lineAt(lineNum).text;
+    while (!closingElementFound && lineNumber < documentNbrOfLines - 1) {
+      const currentLineText: string = document.lineAt(lineNumber).text;
       const openedClosedElementOccurrences =
         this.locOpenedClosedElementOccurrences(currentLineText, bracketType);
       openedElementOccurrences +=
@@ -289,10 +302,10 @@ export class JSDebugMessageLine implements DebugMessageLine {
         openedClosedElementOccurrences.closedElementOccurrences;
       if (openedElementOccurrences === closedElementOccurrences) {
         closingElementFound = true;
-        return lineNum;
+        return lineNumber;
       }
-      lineNum++;
+      lineNumber++;
     }
-    return lineNum;
+    return lineNumber;
   }
 }

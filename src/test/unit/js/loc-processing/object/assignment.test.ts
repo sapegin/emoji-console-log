@@ -5,7 +5,7 @@ import helpers from '../../helpers';
 export default (): void => {
   describe('Assignment of object literal to a variable', () => {
     it('Should return true for object literal assignment LOCs', () => {
-      const objLiteralAssignmentLOCs = [
+      const objectLiteralAssignmentLOCs = [
         `var myObject = {
                         sProp: 'some string value',
                         numProp: 2,
@@ -42,16 +42,16 @@ export default (): void => {
         'export const platform={clear(){',
         'let obj = {x, y, z};',
       ];
-      objLiteralAssignmentLOCs.forEach((objLiteralAssignmentLOC) => {
+      for (const objectLiteralAssignmentLOC of objectLiteralAssignmentLOCs) {
         expect(
           helpers.jsLineCodeProcessing.isObjectLiteralAssignedToVariable(
-            objLiteralAssignmentLOC,
+            objectLiteralAssignmentLOC,
           ),
         ).to.equal(true);
-      });
+      }
     });
     it('Should return false for non-object literal assignment LOCs', () => {
-      const nonObjLiteralAssignmentLOCs = [
+      const nonObjectLiteralAssignmentLOCs = [
         `var myVar = 1;`,
         `var myVar = false`,
         `var myVar = [1, 'hello', false];`,
@@ -62,13 +62,13 @@ export default (): void => {
         `sayHello(someObj: { someProp: string }): number {`,
       ];
 
-      nonObjLiteralAssignmentLOCs.forEach((nonObjLiteralAssignmentLOC) => {
+      for (const nonObjectLiteralAssignmentLOC of nonObjectLiteralAssignmentLOCs) {
         expect(
           helpers.jsLineCodeProcessing.isObjectLiteralAssignedToVariable(
-            nonObjLiteralAssignmentLOC,
+            nonObjectLiteralAssignmentLOC,
           ),
         ).to.equal(false);
-      });
+      }
     });
   });
 };

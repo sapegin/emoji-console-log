@@ -10,16 +10,16 @@ export default (): void => {
         'const happyBirthday = (fullName, age) => `Happy ${age} birthday ${fullName}`',
         'fullName => `Hello ${fullName}`',
       ];
-      anonymousFunctionsLOCs.forEach((anonymousFunctionLOC) => {
+      for (const anonymousFunctionLOC of anonymousFunctionsLOCs) {
         expect(
           helpers.jsLineCodeProcessing.isAnonymousFunction(
             anonymousFunctionLOC,
           ),
         ).to.equal(true);
-      });
+      }
     });
     it('Should return true if the indicated parameter is an argument of the anonymous function', () => {
-      const anonymousFunctionsArgs = [
+      const anonymousFunctionsArguments = [
         {
           loc: 'const sayHello = fullName => `Hello ${fullName}`',
           arg: 'fullName',
@@ -37,11 +37,11 @@ export default (): void => {
           arg: 'item',
         },
       ];
-      anonymousFunctionsArgs.forEach(({ loc, arg }) => {
+      for (const { loc, arg } of anonymousFunctionsArguments) {
         expect(
           helpers.jsLineCodeProcessing.isArgumentOfAnonymousFunction(loc, arg),
         ).to.equal(true);
-      });
+      }
     });
     it('Should return false if the indicated parameter is not an argument of the anonymous function', () => {
       expect(
@@ -63,25 +63,25 @@ export default (): void => {
         'const happyBirthday = (fullName, age) => `Happy ${age} birthday ${fullName}`',
         'fullName => `Hello ${fullName}`',
       ];
-      anonymousFunctionsLOCs.forEach((anonymousFunctionLOC) => {
+      for (const anonymousFunctionLOC of anonymousFunctionsLOCs) {
         expect(
           helpers.jsLineCodeProcessing.shouldTransformAnonymousFunction(
             anonymousFunctionLOC,
           ),
         ).to.equal(true);
-      });
+      }
     });
     it('Should return false if anonymous function is already transformed', () => {
       const transformedAnonymousFunctions = [
         'const sayHello = fullName => { `Hello ${fullName}`',
       ];
-      transformedAnonymousFunctions.forEach((transformedAnonymousFunction) => {
+      for (const transformedAnonymousFunction of transformedAnonymousFunctions) {
         expect(
           helpers.jsLineCodeProcessing.shouldTransformAnonymousFunction(
             transformedAnonymousFunction,
           ),
         ).to.equal(false);
-      });
+      }
     });
   });
 };

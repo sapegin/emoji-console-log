@@ -1,2 +1,1 @@
-import { DebugMessage } from './DebugMessage';
-export { DebugMessage };
+export { DebugMessage } from './DebugMessage';

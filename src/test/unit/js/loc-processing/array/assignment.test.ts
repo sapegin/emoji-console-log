@@ -17,13 +17,13 @@ export default (): void => {
                     }, true, false, 'hie'];`,
         `export const SLIDE_LEFT_ANIMATION = [`,
       ];
-      arrayAssignmentLOCs.forEach((arrayAssignmentLOC) => {
+      for (const arrayAssignmentLOC of arrayAssignmentLOCs) {
         expect(
           helpers.jsLineCodeProcessing.isArrayAssignedToVariable(
             arrayAssignmentLOC,
           ),
         ).to.equal(true);
-      });
+      }
     });
     it('Should return false for non-array assignment LOCs', () => {
       const nonArrayAssignmentLOCs = [
@@ -42,13 +42,13 @@ export default (): void => {
                     `,
         `someFunc(someArray: Array<number> = [1, 2, 3]) {}`,
       ];
-      nonArrayAssignmentLOCs.forEach((nonArrayAssignmentLOC) => {
+      for (const nonArrayAssignmentLOC of nonArrayAssignmentLOCs) {
         expect(
           helpers.jsLineCodeProcessing.isArrayAssignedToVariable(
             nonArrayAssignmentLOC,
           ),
         ).to.equal(false);
-      });
+      }
     });
   });
 };

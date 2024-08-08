@@ -49,7 +49,7 @@ export default (): void => {
             );
             const textDocument = activeTextEditor.document;
             expect(
-              /\{\s*$/.test(textDocument.lineAt(naturalEditorLine(3)).text),
+              /{\s*$/.test(textDocument.lineAt(naturalEditorLine(3)).text),
             ).to.equal(true);
             expect(
               /console\.log\(.*/.test(
@@ -83,7 +83,7 @@ export default (): void => {
             );
             const textDocument = activeTextEditor.document;
             expect(
-              /\{\s*$/.test(textDocument.lineAt(naturalEditorLine(5)).text),
+              /{\s*$/.test(textDocument.lineAt(naturalEditorLine(5)).text),
             ).to.equal(true);
             expect(
               /console\.log\(.*/.test(
@@ -122,7 +122,7 @@ export default (): void => {
             );
             const textDocument = activeTextEditor.document;
             expect(
-              /\{\s*$/.test(textDocument.lineAt(naturalEditorLine(8)).text),
+              /{\s*$/.test(textDocument.lineAt(naturalEditorLine(8)).text),
             ).to.equal(true);
             expect(
               /console\.log\(.*/.test(
@@ -164,7 +164,7 @@ export default (): void => {
           );
           const textDocument = activeTextEditor.document;
           expect(
-            /\{\s*$/.test(textDocument.lineAt(naturalEditorLine(12)).text),
+            /{\s*$/.test(textDocument.lineAt(naturalEditorLine(12)).text),
           ).to.equal(true);
           expect(
             /console\.log\(.*/.test(
@@ -203,7 +203,7 @@ export default (): void => {
           );
           const textDocument = activeTextEditor.document;
           expect(
-            /\{\s*$/.test(textDocument.lineAt(naturalEditorLine(19)).text),
+            /{\s*$/.test(textDocument.lineAt(naturalEditorLine(19)).text),
           ).to.equal(true);
           expect(
             /console\.log\(.*/.test(
@@ -242,7 +242,7 @@ export default (): void => {
           );
           const textDocument = activeTextEditor.document;
           expect(
-            /\{\s*$/.test(textDocument.lineAt(naturalEditorLine(27)).text),
+            /{\s*$/.test(textDocument.lineAt(naturalEditorLine(27)).text),
           ).to.equal(true);
           expect(
             /console\.log\(.*/.test(
@@ -281,7 +281,7 @@ export default (): void => {
           );
           const textDocument = activeTextEditor.document;
           expect(
-            /\{\s*$/.test(textDocument.lineAt(naturalEditorLine(35)).text),
+            /{\s*$/.test(textDocument.lineAt(naturalEditorLine(35)).text),
           ).to.equal(true);
           expect(
             /console\.log\(.*/.test(

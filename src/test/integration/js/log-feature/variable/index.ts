@@ -1,14 +1,14 @@
 import { describe } from 'mocha';
-import deconstructionVarAssignmentTest from './deconstructionVarAssignment';
-import deconstructionArgFunction from './deconstructionArgFunction';
+import deconstructionVariableAssignmentTest from './deconstructionVariableAssignment';
+import deconstructionArgumentFunction from './deconstructionArgumentFunction';
 import primitiveVariableTest from './primitiveVariable';
 import logLastLineTest from './logLastLine';
 
 export default (): void => {
   describe('Variable context menu', () => {
-    deconstructionVarAssignmentTest();
+    deconstructionVariableAssignmentTest();
     primitiveVariableTest();
     logLastLineTest();
-    deconstructionArgFunction();
+    deconstructionArgumentFunction();
   });
 };

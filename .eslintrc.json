@@ -1,8 +1,0 @@
-{
-  "extends": ["tamia/typescript"],
-  "rules": {
-    "require-await": "off",
-    "@typescript-eslint/explicit-member-accessibility": "off"
-  },
-  "overrides": []
-}
