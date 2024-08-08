@@ -14,18 +14,15 @@ function getExtensionProperties(
 }
 
 export function activate(): void {
-  const jsLineCodeProcessing = new LineCodeProcessing();
-  const debugMessageLine = new DebugMessageLine(jsLineCodeProcessing);
-  const jsDebugMessage = new DebugMessage(
-    jsLineCodeProcessing,
-    debugMessageLine,
-  );
+  const lineCodeProcessing = new LineCodeProcessing();
+  const debugMessageLine = new DebugMessageLine(lineCodeProcessing);
+  const debugMessage = new DebugMessage(lineCodeProcessing, debugMessageLine);
   const config = vscode.workspace.getConfiguration('emojiConsoleLog');
   const properties = getExtensionProperties(config);
   const commands = getAllCommands();
   for (const { name, handler } of commands) {
     vscode.commands.registerCommand(name, (commandArguments: unknown[]) => {
-      handler(properties, jsDebugMessage, commandArguments);
+      handler(properties, debugMessage, commandArguments);
     });
   }
 }

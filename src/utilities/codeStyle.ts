@@ -5,15 +5,14 @@ import path from 'node:path';
 import { readFileSync } from 'node:fs';
 import memoize from 'lodash/memoize';
 import { findUp } from 'find-up';
-import { TextEditorOptions, window } from 'vscode';
+import { TextEditorOptions } from 'vscode';
+import { logDebugMessage } from './debug';
 
 // We can't use Prettier directly since extensions don't allow dynamic imports:
 // https://github.com/prettier/prettier-vscode/pull/3016
 // Instead we find and read Prettier config file manually.
 // We only support JSON and JavaScript configs
 // https://prettier.io/docs/en/configuration
-
-const debug = window.createOutputChannel('Emoji Console Log');
 
 export interface CodeStyle {
   tab: string;
@@ -29,14 +28,14 @@ async function readPrettierConfigJavaScript(filepath: string) {
   try {
     const config = require(filepath);
 
-    debug.appendLine(`Prettier config:`);
-    debug.appendLine(JSON.stringify(config));
+    logDebugMessage(`Prettier config:`);
+    logDebugMessage(JSON.stringify(config));
 
     return config;
   } catch (error) {
-    debug.appendLine(`Cannot read Prettier config from ${filepath}:`);
+    logDebugMessage(`Cannot read Prettier config from ${filepath}:`);
     if (error instanceof Error) {
-      debug.appendLine(error.message);
+      logDebugMessage(error.message);
     }
     return {};
   }
@@ -46,14 +45,14 @@ async function readPrettierConfigJson(filepath: string) {
   try {
     const config = JSON.parse(readFileSync(filepath, 'utf8'));
 
-    debug.appendLine(`Prettier config:`);
-    debug.appendLine(JSON.stringify(config));
+    logDebugMessage(`Prettier config:`);
+    logDebugMessage(JSON.stringify(config));
 
     return config;
   } catch (error) {
-    debug.appendLine(`Cannot read Prettier config from ${filepath}:`);
+    logDebugMessage(`Cannot read Prettier config from ${filepath}:`);
     if (error instanceof Error) {
-      debug.appendLine(error.message);
+      logDebugMessage(error.message);
     }
     return {};
   }
@@ -64,17 +63,17 @@ async function readPrettierConfigPackage(filepath: string) {
     const packageJson = JSON.parse(readFileSync(filepath, 'utf8'));
 
     if (packageJson.prettier) {
-      debug.appendLine(`Prettier config:`);
-      debug.appendLine(JSON.stringify(packageJson.prettier));
+      logDebugMessage(`Prettier config:`);
+      logDebugMessage(JSON.stringify(packageJson.prettier));
 
       return packageJson.prettier;
     } else {
       return {};
     }
   } catch (error) {
-    debug.appendLine(`Cannot read Prettier config from ${filepath}:`);
+    logDebugMessage(`Cannot read Prettier config from ${filepath}:`);
     if (error instanceof Error) {
-      debug.appendLine(error.message);
+      logDebugMessage(error.message);
     }
     return {};
   }
@@ -117,8 +116,8 @@ async function resolvePrettierConfig(filepath: string) {
   );
 
   if (configFile) {
-    debug.appendLine(`Prettier config file for ${filepath}:`);
-    debug.appendLine(`${configFile}`);
+    logDebugMessage(`Prettier config file for ${filepath}:`);
+    logDebugMessage(`${configFile}`);
 
     // Try to read config file
     return getPrettierConfig(configFile);
@@ -130,8 +129,8 @@ async function resolvePrettierConfig(filepath: string) {
   });
 
   if (packageFile) {
-    debug.appendLine(`Package.json for ${filepath}:`);
-    debug.appendLine(`${packageFile}`);
+    logDebugMessage(`Package.json for ${filepath}:`);
+    logDebugMessage(`${packageFile}`);
 
     return readPrettierConfigPackage(packageFile);
   }
@@ -163,8 +162,8 @@ async function getFileCodeStyleRaw(
     semicolon: useSemicolon ? ';' : '',
   };
 
-  debug.appendLine(`Detected code style for ${filepath}:`);
-  debug.appendLine(JSON.stringify(style));
+  logDebugMessage(`Detected code style for ${filepath}:`);
+  logDebugMessage(JSON.stringify(style));
 
   return style;
 }

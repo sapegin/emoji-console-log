@@ -19,6 +19,7 @@ import {
 } from '../utilities';
 import { DebugMessageAnonymous } from './DebugMessageAnonymous';
 import { LogContextMetadata, NamedFunctionMetadata } from '../types/LogMessage';
+import { logDebugMessage } from '../utilities/debug';
 
 const logMessageTypeVerificationPriority = sortBy(
   [
@@ -183,45 +184,7 @@ export class DebugMessage {
     }
   }
 
-  private deepObjectProperty(
-    document: TextDocument,
-    line: number,
-    path = '',
-  ): { path: string; line: number } | undefined {
-    const lineText = document.lineAt(line).text;
-    const propertyNameRegex = /(\w+):\s*{/;
-    const propertyNameRegexMatch = propertyNameRegex.exec(lineText);
-    if (propertyNameRegexMatch) {
-      const multilineBracesVariable = getMultiLineContextVariable(
-        document,
-        line,
-        BracketType.CURLY_BRACES,
-      );
-      if (multilineBracesVariable) {
-        return this.deepObjectProperty(
-          document,
-          multilineBracesVariable.openingContextLine,
-          `${propertyNameRegexMatch[1]}.${path}`,
-        );
-      }
-    } else if (
-      this.lineCodeProcessing.isObjectLiteralAssignedToVariable(
-        `${document.lineAt(line).text}${document.lineAt(line + 1).text})}`,
-      )
-    ) {
-      return {
-        path: `${document
-          .lineAt(line)
-          .text.split('=')[0]
-          .replace(/(const|let|var)/, '')
-          .trim()}.${path}`,
-        line: closingContextLine(document, line, BracketType.CURLY_BRACES),
-      };
-    }
-    return undefined;
-  }
-
-  msg(
+  insertMessage(
     textEditor: TextEditorEdit,
     document: TextDocument,
     selectedVariable: string,
@@ -229,11 +192,7 @@ export class DebugMessage {
     style: CodeStyle,
     { logFunction }: ExtensionProperties,
   ): void {
-    const logMessage = this.logMessage(
-      document,
-      lineOfSelectedVariable,
-      selectedVariable,
-    );
+    const logMessage = this.logMessage(document, lineOfSelectedVariable);
     const lineOfLogMessage = this.line(
       document,
       lineOfSelectedVariable,
@@ -242,8 +201,7 @@ export class DebugMessage {
     );
     const spacesBeforeMessage = this.spacesBeforeLogMsg(
       document,
-      (logMessage.metadata as LogContextMetadata)?.deepObjectLine ??
-        lineOfSelectedVariable,
+      lineOfSelectedVariable,
       lineOfLogMessage,
     );
 
@@ -256,11 +214,14 @@ export class DebugMessage {
         logFunction,
       );
 
-    const variableToLog =
-      (logMessage.metadata as LogContextMetadata)?.deepObjectPath ??
-      selectedVariable;
-    const message = `${style.quote}${getRandomEmoji()} ${variableToLog}${style.quote}`;
-    const debuggingMessageContent = `${logFunction}(${message}, ${variableToLog})${style.semicolon}`;
+    const { quote, semicolon } = style;
+    const emoji = getRandomEmoji();
+    const message = selectedVariable
+      ? `${quote}${emoji} ${selectedVariable}${quote}`
+      : `${quote}${emoji}${quote}`;
+    const debuggingMessageContent = selectedVariable
+      ? `${logFunction}(${message}, ${selectedVariable})${semicolon}`
+      : `${logFunction}(${message})${semicolon}`;
     const debuggingMessage = `${spacesBeforeMessage}${debuggingMessageContent}`;
     const selectedVariableLine = document.lineAt(lineOfSelectedVariable);
     const selectedVariableLineLoc = selectedVariableLine.text;
@@ -307,12 +268,15 @@ export class DebugMessage {
       insertEmptyLineAfterLogMessage,
     );
   }
-  logMessage(
-    document: TextDocument,
-    selectionLine: number,
-    selectedVariable: string,
-  ): LogMessage {
+
+  logMessage(document: TextDocument, selectionLine: number): LogMessage {
     const currentLineText: string = document.lineAt(selectionLine).text;
+
+    // TODO: Insert empty log message
+    if (currentLineText.trim() === '') {
+      logDebugMessage('We are on empty line!');
+    }
+
     const multilineParenthesisVariable = getMultiLineContextVariable(
       document,
       selectionLine,
@@ -410,29 +374,6 @@ export class DebugMessage {
           !this.lineCodeProcessing.isAffectationToVariable(currentLineText);
 
         if (isChecked && multilineBracesVariable) {
-          const deepObjectProperty = this.deepObjectProperty(
-            document,
-            multilineBracesVariable.openingContextLine,
-            selectedVariable,
-          );
-          if (deepObjectProperty) {
-            const multilineBracesObjectScope = getMultiLineContextVariable(
-              document,
-              deepObjectProperty.line,
-              BracketType.CURLY_BRACES,
-            );
-            return {
-              isChecked: true,
-              metadata: {
-                openingContextLine:
-                  multilineBracesObjectScope?.openingContextLine as number,
-                closingContextLine:
-                  multilineBracesObjectScope?.closingContextLine as number,
-                deepObjectLine: deepObjectProperty.line,
-                deepObjectPath: deepObjectProperty.path,
-              } as Pick<LogMessage, 'metadata'>,
-            };
-          }
           return {
             isChecked: true,
             metadata: {

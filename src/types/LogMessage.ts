@@ -15,8 +15,6 @@ export enum LogMessageType {
 export type LogContextMetadata = {
   openingContextLine: number;
   closingContextLine: number;
-  deepObjectLine: number;
-  deepObjectPath: string;
 };
 export type NamedFunctionMetadata = {
   line: number;
