@@ -4,7 +4,7 @@ import {
   LogContextMetadata,
   LogMessage,
   LogMessageType,
-} from '../../entities';
+} from '../../types';
 import { DebugMessageLine } from '../DebugMessageLine';
 import { getMultiLineContextVariable } from '../../utilities';
 import { LineCodeProcessing } from '../../line-code-processing';

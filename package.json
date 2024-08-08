@@ -103,6 +103,7 @@
     "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
     "watch": "npm run esbuild-watch",
     "lint": "eslint . --cache --fix",
+    "typecheck": "tsc --noEmit",
     "format": "prettier --log-level warn --write \"**/*.{js,mjs,ts,tsx,md}\"",
     "pretest": "npm run esbuild-base",
     "test-compile": "rm -rf out && tsc -p ./ && mkdir out/test/files && cp -r src/test/files/ out/test/files/",

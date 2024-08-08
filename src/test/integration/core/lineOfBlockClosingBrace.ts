@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import Mocha, { it, describe } from 'mocha';
 import { expect } from 'chai';
 import { openDocument, expectActiveTextEditorWithFile } from '../helpers';
-import { BracketType } from '../../../entities';
+import { BracketType } from '../../../types';
 import { closingContextLine } from '../../../utilities/closingContextLine';
 
 export default (): void => {

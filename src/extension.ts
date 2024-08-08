@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { JSDebugMessage } from './debug-message/js';
-import { ExtensionProperties } from './entities';
+import { ExtensionProperties } from './types';
 import { JSLineCodeProcessing } from './line-code-processing/js';
 import { getAllCommands } from './commands/';
 import { JSDebugMessageLine } from './debug-message/js/JSDebugMessageLine';

@@ -1,6 +1,6 @@
 import { window } from 'vscode';
 import { DebugMessage } from '../debug-message';
-import { Command, ExtensionProperties } from '../entities';
+import { Command, ExtensionProperties } from '../types';
 import { getFileCodeStyle } from '../utilities';
 
 export function addLogMessageCommand(): Command {

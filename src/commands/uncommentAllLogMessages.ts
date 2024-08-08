@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { DebugMessage } from '../debug-message';
-import { Command, ExtensionProperties, Message } from '../entities';
+import { Command, ExtensionProperties, Message } from '../types';
 
 export function uncommentAllLogMessagesCommand(): Command {
   return {

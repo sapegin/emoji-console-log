@@ -1,5 +1,5 @@
 import { Position, TextDocument, TextEditorEdit, TextLine } from 'vscode';
-import { BracketType } from '../../entities';
+import { BracketType } from '../../types';
 import { LineCodeProcessing } from '../../line-code-processing';
 import {
   spacesBeforeLine,

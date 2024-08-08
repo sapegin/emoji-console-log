@@ -1,5 +1,5 @@
 import { TextDocument } from 'vscode';
-import { BracketType } from '../entities';
+import { BracketType } from '../types';
 import { locBrackets } from './locBrackets';
 
 export function closingContextLine(

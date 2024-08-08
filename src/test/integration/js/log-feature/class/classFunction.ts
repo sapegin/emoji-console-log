@@ -8,7 +8,7 @@ import {
   expectActiveTextEditorWithFile,
   documentLinesChanged,
 } from '../../../helpers';
-import { ProgrammingLanguage } from '../../../../../entities';
+import { ProgrammingLanguage } from '../../../../../types';
 
 export default (): void => {
   describe('Function inside a class', () => {

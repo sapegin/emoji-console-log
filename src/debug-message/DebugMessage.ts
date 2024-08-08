@@ -1,13 +1,13 @@
 import { TextDocument, TextEditorEdit } from 'vscode';
-import {
-  BlockType,
-  ExtensionProperties,
-  LogMessage,
-  Message,
-} from '../entities';
 import { LineCodeProcessing } from '../line-code-processing';
 import { CodeStyle } from '../utilities';
 import { DebugMessageLine } from './DebugMessageLine';
+import type {
+  LogMessage,
+  ExtensionProperties,
+  Message,
+  BlockType,
+} from '../types';
 
 export abstract class DebugMessage {
   lineCodeProcessing: LineCodeProcessing;

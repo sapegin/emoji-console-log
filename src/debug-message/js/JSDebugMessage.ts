@@ -6,7 +6,7 @@ import {
   LogMessageType,
   Message,
   LogMessage,
-} from '../../entities';
+} from '../../types';
 import { LineCodeProcessing } from '../../line-code-processing';
 import sortBy from 'lodash/sortBy';
 import { DebugMessage } from '../DebugMessage';
@@ -22,7 +22,7 @@ import { JSDebugMessageAnonymous } from './JSDebugMessageAnonymous';
 import {
   LogContextMetadata,
   NamedFunctionMetadata,
-} from '../../entities/extension/logMessage';
+} from '../../types/LogMessage';
 
 const logMessageTypeVerificationPriority = sortBy(
   [

@@ -1,5 +1,5 @@
 import { TextDocument } from 'vscode';
-import { LogMessage } from '../entities';
+import { LogMessage } from '../types';
 
 export interface DebugMessageLine {
   line(

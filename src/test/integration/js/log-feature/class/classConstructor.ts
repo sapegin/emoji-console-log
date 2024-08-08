@@ -7,7 +7,7 @@ import {
   documentLinesChanged,
   NaturalEditorPosition,
 } from '../../../helpers';
-import { ProgrammingLanguage } from '../../../../../entities';
+import { ProgrammingLanguage } from '../../../../../types';
 
 export default (): void => {
   describe('Parameter of a class constructor', () => {

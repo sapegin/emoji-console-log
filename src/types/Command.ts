@@ -1,5 +1,5 @@
-import { DebugMessage } from '../../debug-message';
-import { ExtensionProperties } from './extensionProperties';
+import { DebugMessage } from '../debug-message';
+import { ExtensionProperties } from './ExtensionProperties';
 
 export type Command = {
   name: string;
