@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.1.0
+## 1.2.0
 
 - Allow empty logs when the command is invoked on an empty line.
 - Support more symbol types for logging: optional chaining, array element, etc.
