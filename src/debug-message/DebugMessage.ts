@@ -7,7 +7,6 @@ import {
   Message,
 } from '../types';
 import { LineCodeProcessing } from '../line-code-processing';
-import sortBy from 'lodash/sortBy';
 import { DebugMessageLine } from './DebugMessageLine';
 import {
   getMultiLineContextVariable,
@@ -17,28 +16,22 @@ import {
   CodeStyle,
 } from '../utilities';
 import { DebugMessageAnonymous } from './DebugMessageAnonymous';
-import { type LogMessageCheck } from '../types/LogMessage';
+import type { LogMessage } from '../types/LogMessage';
 import { logDebugMessage } from '../utilities/debug';
 
-const logMessageTypeVerificationPriority = sortBy(
-  [
-    { logMessageType: LogMessageType.ArrayAssignment, priority: 2 },
-    { logMessageType: LogMessageType.ObjectLiteral, priority: 3 },
-    {
-      logMessageType: LogMessageType.ObjectFunctionCallAssignment,
-      priority: 4,
-    },
-    { logMessageType: LogMessageType.NamedFunction, priority: 6 },
-    { logMessageType: LogMessageType.NamedFunctionAssignment, priority: 5 },
-    { logMessageType: LogMessageType.MultiLineAnonymousFunction, priority: 7 },
-    { logMessageType: LogMessageType.MultilineParenthesis, priority: 8 },
-    { logMessageType: LogMessageType.MultilineBraces, priority: 9 },
-    { logMessageType: LogMessageType.PrimitiveAssignment, priority: 10 },
-    { logMessageType: LogMessageType.Decorator, priority: 0 },
-    { logMessageType: LogMessageType.Ternary, priority: 1 },
-  ],
-  'priority',
-);
+const logMessageTypeVerificationPriority = [
+  LogMessageType.Decorator,
+  LogMessageType.Ternary,
+  LogMessageType.ArrayAssignment,
+  LogMessageType.ObjectLiteral,
+  LogMessageType.ObjectFunctionCallAssignment,
+  LogMessageType.NamedFunctionAssignment,
+  LogMessageType.NamedFunction,
+  LogMessageType.MultiLineAnonymousFunction,
+  LogMessageType.MultilineParenthesis,
+  LogMessageType.MultilineBraces,
+  LogMessageType.PrimitiveAssignment,
+];
 
 export class DebugMessage {
   lineCodeProcessing: LineCodeProcessing;
@@ -60,7 +53,7 @@ export class DebugMessage {
     document: TextDocument,
     selectionLine: number,
     selectedVariable: string,
-    logMessage: LogMessageCheck,
+    logMessage: LogMessage,
   ): number {
     return this.debugMessageLine.line(
       document,
@@ -123,10 +116,7 @@ export class DebugMessage {
     );
   }
 
-  private isEmptyBlockContext(
-    document: TextDocument,
-    logMessage: LogMessageCheck,
-  ) {
+  private isEmptyBlockContext(document: TextDocument, logMessage: LogMessage) {
     if (logMessage.type === LogMessageType.MultilineParenthesis) {
       return /\){.*}/.test(
         document
@@ -276,7 +266,7 @@ export class DebugMessage {
     );
   }
 
-  logMessage(document: TextDocument, selectionLine: number): LogMessageCheck {
+  logMessage(document: TextDocument, selectionLine: number): LogMessage {
     const currentLineText: string = document.lineAt(selectionLine).text;
 
     // TODO: Insert empty log message
@@ -296,21 +286,11 @@ export class DebugMessage {
     );
 
     const logMessageTypesChecks: {
-      [key in LogMessageType]: () => LogMessageCheck;
+      [key in LogMessageType]: () => LogMessage | undefined;
     } = {
-      [LogMessageType.None]: () => {
-        return {
-          type: LogMessageType.None,
-          isChecked: false,
-        };
-      },
-
       [LogMessageType.ObjectLiteral]: () => {
         if (document.lineCount === selectionLine + 1) {
-          return {
-            type: LogMessageType.None,
-            isChecked: false,
-          };
+          return;
         }
 
         let nextLineIndex = selectionLine + 1;
@@ -328,10 +308,7 @@ export class DebugMessage {
             while (!nextLineText.trim().endsWith('*/')) {
               nextLineIndex++;
               if (nextLineIndex >= document.lineCount) {
-                return {
-                  type: LogMessageType.None,
-                  isChecked: false,
-                };
+                return;
               }
               nextLineText = document
                 .lineAt(nextLineIndex)
@@ -343,49 +320,52 @@ export class DebugMessage {
           }
 
           if (nextLineIndex >= document.lineCount) {
-            return {
-              type: LogMessageType.None,
-              isChecked: false,
-            };
+            return;
           }
+
           nextLineText = document
             .lineAt(nextLineIndex)
             .text.replaceAll(/\s/g, '');
         }
 
         const combinedText = `${currentLineText}${nextLineText}`;
-        return {
-          type: LogMessageType.ObjectLiteral,
-          isChecked:
-            this.lineCodeProcessing.isObjectLiteralAssignedToVariable(
-              combinedText,
-            ),
-        };
+        if (
+          this.lineCodeProcessing.isObjectLiteralAssignedToVariable(
+            combinedText,
+          )
+        ) {
+          return {
+            type: LogMessageType.ObjectLiteral,
+          };
+        }
       },
 
       [LogMessageType.Decorator]: () => {
-        return {
-          type: LogMessageType.Decorator,
-          isChecked: /^@[\dA-Za-z]+(.*)[\dA-Za-z]+/.test(
-            currentLineText.trim(),
-          ),
-        };
+        if (/^@[\dA-Za-z]+(.*)[\dA-Za-z]+/.test(currentLineText.trim())) {
+          return {
+            type: LogMessageType.Decorator,
+          };
+        }
       },
 
       [LogMessageType.ArrayAssignment]: () => {
-        return {
-          type: LogMessageType.ArrayAssignment,
-          isChecked: this.lineCodeProcessing.isArrayAssignedToVariable(
+        if (
+          this.lineCodeProcessing.isArrayAssignedToVariable(
             `${currentLineText}\n${currentLineText}`,
-          ),
-        };
+          )
+        ) {
+          return {
+            type: LogMessageType.ArrayAssignment,
+          };
+        }
       },
 
       [LogMessageType.Ternary]: () => {
-        return {
-          type: LogMessageType.Ternary,
-          isChecked: /`/.test(currentLineText),
-        };
+        if (/`/.test(currentLineText)) {
+          return {
+            type: LogMessageType.Ternary,
+          };
+        }
       },
 
       [LogMessageType.MultilineBraces]: () => {
@@ -397,17 +377,12 @@ export class DebugMessage {
         if (isChecked && multilineBracesVariable) {
           return {
             type: LogMessageType.MultilineBraces,
-            isChecked: true,
             metadata: {
               openingContextLine: multilineBracesVariable?.openingContextLine,
               closingContextLine: multilineBracesVariable?.closingContextLine,
             },
           };
         }
-        return {
-          type: LogMessageType.None,
-          isChecked: false,
-        };
       },
 
       [LogMessageType.MultilineParenthesis]: () => {
@@ -423,7 +398,6 @@ export class DebugMessage {
             if (this.lineCodeProcessing.isAssignedToVariable(currentLineText)) {
               return {
                 type: LogMessageType.MultilineParenthesis,
-                isChecked: true,
                 metadata: {
                   openingContextLine: selectionLine,
                   closingContextLine: closingContextLine(
@@ -438,7 +412,6 @@ export class DebugMessage {
             }
             return {
               type: LogMessageType.MultilineParenthesis,
-              isChecked: true,
               metadata: {
                 openingContextLine:
                   multilineParenthesisVariable?.openingContextLine ?? 0,
@@ -448,92 +421,90 @@ export class DebugMessage {
             };
           }
         }
-        return {
-          type: LogMessageType.None,
-          isChecked: false,
-        };
       },
 
       [LogMessageType.ObjectFunctionCallAssignment]: () => {
         if (document.lineCount === selectionLine + 1) {
-          return {
-            type: LogMessageType.None,
-            isChecked: false,
-          };
+          return;
         }
         const nextLineText: string = document
           .lineAt(selectionLine + 1)
           .text.replaceAll(/\s/g, '');
-        return {
-          type: LogMessageType.ObjectFunctionCallAssignment,
-          isChecked:
-            this.lineCodeProcessing.isObjectFunctionCall(
-              `${currentLineText}\n${nextLineText}`,
-            ) && this.lineCodeProcessing.isAssignedToVariable(currentLineText),
-        };
+        if (
+          this.lineCodeProcessing.isObjectFunctionCall(
+            `${currentLineText}\n${nextLineText}`,
+          ) &&
+          this.lineCodeProcessing.isAssignedToVariable(currentLineText)
+        ) {
+          return {
+            type: LogMessageType.ObjectFunctionCallAssignment,
+          };
+        }
       },
 
       [LogMessageType.NamedFunction]: () => {
-        return {
-          type: LogMessageType.NamedFunction,
-          isChecked:
-            this.lineCodeProcessing.doesContainsNamedFunctionDeclaration(
-              currentLineText,
-            ),
-          metadata: {
-            line: selectionLine,
-          },
-        };
+        if (
+          this.lineCodeProcessing.doesContainsNamedFunctionDeclaration(
+            currentLineText,
+          )
+        ) {
+          return {
+            type: LogMessageType.NamedFunction,
+            metadata: {
+              line: selectionLine,
+            },
+          };
+        }
       },
 
       [LogMessageType.NamedFunctionAssignment]: () => {
-        return {
-          type: LogMessageType.NamedFunctionAssignment,
-          isChecked:
-            this.lineCodeProcessing.isFunctionAssignedToVariable(
-              `${currentLineText}`,
-            ) && multilineParenthesisVariable === null,
-        };
+        if (
+          this.lineCodeProcessing.isFunctionAssignedToVariable(
+            `${currentLineText}`,
+          ) &&
+          multilineParenthesisVariable === null
+        ) {
+          return {
+            type: LogMessageType.NamedFunctionAssignment,
+          };
+        }
       },
 
       [LogMessageType.MultiLineAnonymousFunction]: () => {
-        return {
-          type: LogMessageType.MultiLineAnonymousFunction,
-          isChecked:
-            this.lineCodeProcessing.isFunctionAssignedToVariable(
-              `${currentLineText}`,
-            ) &&
-            this.lineCodeProcessing.isAnonymousFunction(currentLineText) &&
-            this.lineCodeProcessing.shouldTransformAnonymousFunction(
-              currentLineText,
-            ),
-        };
+        if (
+          this.lineCodeProcessing.isFunctionAssignedToVariable(
+            `${currentLineText}`,
+          ) &&
+          this.lineCodeProcessing.isAnonymousFunction(currentLineText) &&
+          this.lineCodeProcessing.shouldTransformAnonymousFunction(
+            currentLineText,
+          )
+        ) {
+          return {
+            type: LogMessageType.MultiLineAnonymousFunction,
+          };
+        }
       },
 
+      // This is used as a default fallback
       [LogMessageType.PrimitiveAssignment]: () => {
         return {
           type: LogMessageType.PrimitiveAssignment,
-          isChecked:
-            this.lineCodeProcessing.isAssignedToVariable(currentLineText),
         };
       },
     };
 
-    for (const { logMessageType } of logMessageTypeVerificationPriority) {
+    for (const logMessageType of logMessageTypeVerificationPriority) {
       const result = logMessageTypesChecks[logMessageType]();
-      if (
-        logMessageType !== LogMessageType.PrimitiveAssignment &&
-        result.isChecked
-      ) {
+      if (result) {
         logDebugMessage('Log message type', logMessageType);
         return result;
       }
     }
 
-    logDebugMessage('Log message type primitive assignment');
+    logDebugMessage('Log message type fallback');
     return {
       type: LogMessageType.PrimitiveAssignment,
-      isChecked: true,
     };
   }
 
