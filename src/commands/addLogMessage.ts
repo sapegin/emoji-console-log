@@ -1,27 +1,16 @@
 import { window, type Selection, type TextDocument } from 'vscode';
 import { DebugMessage } from '../debug-message';
 import { Command, ExtensionProperties } from '../types';
-import { getFileCodeStyle } from '../utilities';
+import { getFileCodeStyle, symbolRegExp } from '../utilities';
 import { logDebugMessage } from '../utilities/debug';
 
-// TODO: We should remove all existing useless and broken tests and start
-// testing utility functions like the one below
-
-// An identifier optionally suffixed by any number of property accessors [...]
-const entityRegExp = /[\w.?]+(\["[^"]+"])*(\['[^']+'])*(\[\d+])*/;
-
 /**
- * Returns a symbol under cursor or en empty string:
- * tacoCat
- * taco.cat
- * taco['cat']
- * taco[13]
- * taco?.cat
+ * Returns a symbol under cursor or en empty string
  */
-function getEntityUnderCursor(document: TextDocument, selection: Selection) {
+function getSymbolUnderCursor(document: TextDocument, selection: Selection) {
   const rangeUnderCursor = document.getWordRangeAtPosition(
     selection.active,
-    entityRegExp,
+    symbolRegExp,
   );
 
   // If range is undefined, `document.getText(undefined)` will return the entire file.
@@ -52,7 +41,7 @@ export function addLogMessageCommand(): Command {
       for (let index = 0; index < editor.selections.length; index++) {
         const selection = editor.selections[index];
 
-        const wordUnderCursor = getEntityUnderCursor(
+        const wordUnderCursor = getSymbolUnderCursor(
           editor.document,
           selection,
         );
