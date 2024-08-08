@@ -5,7 +5,7 @@ export default (): void => {
   describe('Check class declaration', () => {
     it('Should return true for class declaration LOCs', () => {
       const classLOCs = [
-        `export class JSLineCodeProcessing implements LineCodeProcessing {`,
+        `export class LineCodeProcessing implements LineCodeProcessing {`,
         `class  HelloWorld extends React.Component {`,
         `class HelloWorld{`,
         `class HelloWorld { `,

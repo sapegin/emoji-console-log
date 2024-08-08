@@ -6,13 +6,13 @@ export default (): void => {
   describe('Extract the class name', () => {
     it('Should extract the class name', () => {
       const classLOCs = [
-        `export class JSLineCodeProcessing implements LineCodeProcessing {`,
+        `export class LineCodeProcessing implements LineCodeProcessing {`,
         `class  MyComponent extends React.Component {`,
         `class HelloWorld{`,
         `class Day { `,
       ];
       const classesNames = [
-        'JSLineCodeProcessing',
+        'LineCodeProcessing',
         'MyComponent',
         'HelloWorld',
         'Day',

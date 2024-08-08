@@ -1,4 +1,4 @@
-import { JSLineCodeProcessing } from '../../../../line-code-processing/js';
+import { LineCodeProcessing } from '../../../../line-code-processing';
 export default {
-  jsLineCodeProcessing: new JSLineCodeProcessing(),
+  jsLineCodeProcessing: new LineCodeProcessing(),
 };

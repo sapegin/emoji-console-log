@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
-import { JSDebugMessage } from './debug-message/js';
+import { DebugMessage } from './debug-message';
 import { ExtensionProperties } from './types';
-import { JSLineCodeProcessing } from './line-code-processing/js';
+import { LineCodeProcessing } from './line-code-processing';
 import { getAllCommands } from './commands/';
-import { JSDebugMessageLine } from './debug-message/js/JSDebugMessageLine';
+import { DebugMessageLine } from './debug-message/DebugMessageLine';
 
 function getExtensionProperties(
   workspaceConfig: vscode.WorkspaceConfiguration,
@@ -14,9 +14,9 @@ function getExtensionProperties(
 }
 
 export function activate(): void {
-  const jsLineCodeProcessing = new JSLineCodeProcessing();
-  const debugMessageLine = new JSDebugMessageLine(jsLineCodeProcessing);
-  const jsDebugMessage = new JSDebugMessage(
+  const jsLineCodeProcessing = new LineCodeProcessing();
+  const debugMessageLine = new DebugMessageLine(jsLineCodeProcessing);
+  const jsDebugMessage = new DebugMessage(
     jsLineCodeProcessing,
     debugMessageLine,
   );

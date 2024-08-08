@@ -1,13 +1,9 @@
 import { Position, TextDocument, TextEditorEdit, TextLine } from 'vscode';
-import { BracketType } from '../../types';
-import { LineCodeProcessing } from '../../line-code-processing';
-import {
-  spacesBeforeLine,
-  closingContextLine,
-  CodeStyle,
-} from '../../utilities';
+import { BracketType } from '../types';
+import { LineCodeProcessing } from '../line-code-processing';
+import { spacesBeforeLine, closingContextLine, CodeStyle } from '../utilities';
 
-export class JSDebugMessageAnonymous {
+export class DebugMessageAnonymous {
   lineCodeProcessing: LineCodeProcessing;
   constructor(lineCodeProcessing: LineCodeProcessing) {
     this.lineCodeProcessing = lineCodeProcessing;
