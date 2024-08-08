@@ -1,8 +1,8 @@
 import { window, type Selection, type TextDocument } from 'vscode';
-import { DebugMessage } from '../debug-message';
-import { Command, ExtensionProperties } from '../types';
+import { ExtensionProperties } from '../types';
 import { getFileCodeStyle, symbolRegExp } from '../utilities';
 import { logDebugMessage } from '../utilities/debug';
+import { insertMessage } from '../utilities/insertMessage';
 
 /**
  * Returns a symbol under cursor or en empty string
@@ -21,50 +21,39 @@ function getSymbolUnderCursor(document: TextDocument, selection: Selection) {
   }
 }
 
-export function addLogMessageCommand(): Command {
-  return {
-    name: 'emojiConsoleLog.addLogMessage',
-    handler: async (
-      extensionProperties: ExtensionProperties,
-      debugMessage: DebugMessage,
-    ) => {
-      const editor = window.activeTextEditor;
-      if (!editor) {
-        return;
-      }
+export async function addLogMessageCommand(
+  extensionProperties: ExtensionProperties,
+) {
+  const editor = window.activeTextEditor;
+  if (!editor) {
+    return;
+  }
 
-      const style = await getFileCodeStyle(
-        editor.document.fileName,
-        editor.options,
+  const style = await getFileCodeStyle(
+    editor.document.fileName,
+    editor.options,
+  );
+
+  for (let index = 0; index < editor.selections.length; index++) {
+    const selection = editor.selections[index];
+
+    const wordUnderCursor = getSymbolUnderCursor(editor.document, selection);
+
+    const selectedVariable =
+      editor.document.getText(selection) || wordUnderCursor;
+    const lineOfSelectedVariable = selection.active.line;
+
+    logDebugMessage(`Insert log with selected variable '${selectedVariable}'`);
+
+    await editor.edit(async (editBuilder) => {
+      insertMessage(
+        editBuilder,
+        editor.document,
+        selectedVariable,
+        lineOfSelectedVariable,
+        style,
+        extensionProperties,
       );
-
-      for (let index = 0; index < editor.selections.length; index++) {
-        const selection = editor.selections[index];
-
-        const wordUnderCursor = getSymbolUnderCursor(
-          editor.document,
-          selection,
-        );
-
-        const selectedVariable =
-          editor.document.getText(selection) || wordUnderCursor;
-        const lineOfSelectedVariable = selection.active.line;
-
-        logDebugMessage(
-          `Insert log with selected variable '${selectedVariable}'`,
-        );
-
-        await editor.edit((editBuilder) => {
-          debugMessage.insertMessage(
-            editBuilder,
-            editor.document,
-            selectedVariable,
-            lineOfSelectedVariable,
-            style,
-            extensionProperties,
-          );
-        });
-      }
-    },
-  };
+    });
+  }
 }

@@ -1,11 +1,12 @@
-import * as vscode from 'vscode';
-import { DebugMessage } from './debug-message';
+import { commands, workspace, type WorkspaceConfiguration } from 'vscode';
 import { ExtensionProperties } from './types';
-import { getAllCommands } from './commands/';
-import { DebugMessageLine } from './debug-message/DebugMessageLine';
+import { addLogMessageCommand } from './commands/addLogMessage';
+import { commentAllLogMessagesCommand } from './commands/commentAllLogMessages';
+import { uncommentAllLogMessagesCommand } from './commands/uncommentAllLogMessages';
+import { removeAllLogMessagesCommand } from './commands/removeAllLogMessages';
 
 function getExtensionProperties(
-  workspaceConfig: vscode.WorkspaceConfiguration,
+  workspaceConfig: WorkspaceConfiguration,
 ): ExtensionProperties {
   return {
     logFunction: workspaceConfig.logFunction ?? 'console.log',
@@ -13,14 +14,18 @@ function getExtensionProperties(
 }
 
 export function activate(): void {
-  const debugMessageLine = new DebugMessageLine();
-  const debugMessage = new DebugMessage(debugMessageLine);
-  const config = vscode.workspace.getConfiguration('emojiConsoleLog');
+  const config = workspace.getConfiguration('emojiConsoleLog');
   const properties = getExtensionProperties(config);
-  const commands = getAllCommands();
-  for (const { name, handler } of commands) {
-    vscode.commands.registerCommand(name, (commandArguments: unknown[]) => {
-      handler(properties, debugMessage, commandArguments);
-    });
-  }
+  commands.registerCommand('emojiConsoleLog.addLogMessage', () => {
+    addLogMessageCommand(properties);
+  });
+  commands.registerCommand('emojiConsoleLog.commentAllLogMessages', () => {
+    commentAllLogMessagesCommand(properties);
+  });
+  commands.registerCommand('emojiConsoleLog.uncommentAllLogMessages', () => {
+    uncommentAllLogMessagesCommand(properties);
+  });
+  commands.registerCommand('emojiConsoleLog.removeAllLogMessages', () => {
+    removeAllLogMessagesCommand(properties);
+  });
 }
