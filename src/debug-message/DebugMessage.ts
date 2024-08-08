@@ -36,7 +36,7 @@ const logMessageTypeVerificationPriority = [
 export class DebugMessage {
   lineCodeProcessing: LineCodeProcessing;
   debugMessageLine: DebugMessageLine;
-  jsDebugMessageAnonymous: DebugMessageAnonymous;
+  debugMessageAnonymous: DebugMessageAnonymous;
 
   constructor(
     lineCodeProcessing: LineCodeProcessing,
@@ -44,9 +44,7 @@ export class DebugMessage {
   ) {
     this.lineCodeProcessing = lineCodeProcessing;
     this.debugMessageLine = debugMessageLine;
-    this.jsDebugMessageAnonymous = new DebugMessageAnonymous(
-      lineCodeProcessing,
-    );
+    this.debugMessageAnonymous = new DebugMessageAnonymous(lineCodeProcessing);
   }
 
   private line(
@@ -202,8 +200,6 @@ export class DebugMessage {
         logFunction,
       );
 
-    logDebugMessage(4);
-
     const { quote, semicolon } = style;
     const emoji = getRandomEmoji();
     const message = selectedVariable
@@ -234,17 +230,14 @@ export class DebugMessage {
       }
       return;
     }
-    logDebugMessage(5);
 
     if (
-      this.jsDebugMessageAnonymous.isAnonymousFunctionContext(
+      this.debugMessageAnonymous.isAnonymousFunctionContext(
         selectedVariable,
         selectedVariableLineLoc,
       )
     ) {
-      logDebugMessage(6);
-
-      this.jsDebugMessageAnonymous.anonymousPropDebuggingMsg(
+      this.debugMessageAnonymous.anonymousPropDebuggingMsg(
         document,
         textEditor,
         style,
@@ -253,8 +246,6 @@ export class DebugMessage {
       );
       return;
     }
-
-    logDebugMessage(7);
 
     this.baseDebuggingMsg(
       document,
@@ -268,12 +259,6 @@ export class DebugMessage {
 
   logMessage(document: TextDocument, selectionLine: number): LogMessage {
     const currentLineText: string = document.lineAt(selectionLine).text;
-
-    // TODO: Insert empty log message
-    if (currentLineText.trim() === '') {
-      logDebugMessage('We are on empty line!');
-    }
-
     const multilineParenthesisVariable = getMultiLineContextVariable(
       document,
       selectionLine,
