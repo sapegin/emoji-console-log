@@ -8,6 +8,8 @@ Visual Studio Code extension to insert `console.log()` statement with a random e
 
 _This is a fork of the [Turbo Console Log](https://www.turboconsolelog.io) extension, [see more details below](#motivation)._
 
+[![Washing your code. A book on clean code for frontend developers](https://sapegin.me/images/washing-code-github.jpg)](https://sapegin.me/book/)
+
 ## Features
 
 - Hotkeys to add, comment, uncomment, and remove logs to monitor different values.
