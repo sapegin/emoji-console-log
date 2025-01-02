@@ -52,12 +52,7 @@ function baseDebuggingMessage(
   insertEmptyLineAfterLogMessage: boolean,
 ): void {
   textEditor.insert(
-    new Position(
-      lineOfLogMessage >= document.lineCount
-        ? document.lineCount
-        : lineOfLogMessage,
-      0,
-    ),
+    new Position(Math.min(lineOfLogMessage, document.lineCount), 0),
     `${insertEmptyLineBeforeLogMessage ? '\n' : ''}${
       lineOfLogMessage === document.lineCount ? '\n' : ''
     }${debuggingMessage}\n${insertEmptyLineAfterLogMessage ? '\n' : ''}`,
@@ -326,12 +321,7 @@ function emptyBlockDebuggingMessage(
       emptyBlockLine.text.split(')')[0];
     textEditor.delete(emptyBlockLine.rangeIncludingLineBreak);
     textEditor.insert(
-      new Position(
-        logMessageLine >= document.lineCount
-          ? document.lineCount
-          : logMessageLine,
-        0,
-      ),
+      new Position(Math.min(logMessageLine, document.lineCount), 0),
       `${textBeforeClosedFunctionParenthesis}) {\n${
         logMessageLine === document.lineCount ? '\n' : ''
       }${spacesBeforeMessage}${debuggingMessage}\n${spacesBeforeMessage}}\n`,
