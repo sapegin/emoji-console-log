@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.1
+
+- Update readme.
+
 ## 1.2.0
 
 - Allow empty logs when the command is invoked on an empty line.
