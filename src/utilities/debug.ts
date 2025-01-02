@@ -1,8 +1,12 @@
 import { window } from 'vscode';
+import packageJson from '../../package.json';
 
-const debug = window.createOutputChannel('Emoji Console Log');
+const debug = window.createOutputChannel(packageJson.displayName);
 
-export function logDebugMessage(...messages: unknown[]) {
+/**
+ * Log debug message or data
+ */
+export function logMessage(...messages: unknown[]) {
   debug.appendLine(
     messages
       .map((x) =>
