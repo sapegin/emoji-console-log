@@ -11,24 +11,24 @@ test.each([
   ],
   ['fullName => `Hello ${fullName}`', 'fullName', true],
   ['const user = users.find(item => item.email === email)', 'item', true],
+
   // Should return false
   ['function functionName(parameter){', 'parameter', false],
   ['const user = users.find(item => item.email === email)', 'user', false],
+  ['const data = useSWR("x/y", () => sdk.partners())', 'data', false],
+  [
+    'const { data: partners } = useSWR("x/y", () => sdk.partners())',
+    'partners',
+    false,
+  ],
+  [
+    'const { data: partners } = useSWR("index/partners", () => sdk.partners())',
+    'partners',
+    false,
+  ],
 ])(
   'isArgumentOfArrowFunction("%s", "%s") should return %s',
   (loc, arg, expected) => {
     expect(isArgumentOfArrowFunction(loc, arg)).to.equal(expected);
   },
 );
-
-test('returns false if the indicated parameter is not an argument of the arrow function', () => {
-  expect(
-    isArgumentOfArrowFunction('function functionName(parameter){', 'parameter'),
-  ).to.equal(false);
-  expect(
-    isArgumentOfArrowFunction(
-      'const user = users.find(item => item.email === email)',
-      'user',
-    ),
-  ).to.equal(false);
-});

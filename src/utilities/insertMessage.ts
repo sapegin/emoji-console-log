@@ -390,7 +390,6 @@ export function insertMessage(
   }
 
   if (
-    isArrowFunction(selectedVariableLineLoc) &&
     isArgumentOfArrowFunction(selectedVariableLineLoc, selectedVariable) &&
     shouldTransformArrowFunction(selectedVariableLineLoc)
   ) {

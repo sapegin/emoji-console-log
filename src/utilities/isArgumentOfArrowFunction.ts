@@ -1,4 +1,5 @@
 import { isArrowFunction } from './isArrowFunction';
+import { removeStringContent } from './removeStringContent';
 
 /**
  * Detects whether a given variable is an arrow function parameter.
@@ -7,11 +8,12 @@ import { isArrowFunction } from './isArrowFunction';
  * - const y = foo.forEach((x) => foo(x)) - y: false, x: true
  */
 export function isArgumentOfArrowFunction(
-  loc: string,
+  line: string,
   argument: string,
 ): boolean {
-  if (isArrowFunction(loc)) {
-    const match = loc.match(/(\(.*\)|\w+)\s*=>/);
+  if (isArrowFunction(line)) {
+    const cleanedLine = removeStringContent(line);
+    const match = cleanedLine.match(/(\(.*\)|\w+)\s*=>/);
     return match !== null && match[1].includes(argument);
   }
   return false;
