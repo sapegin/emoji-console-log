@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.3
+
+- Don’t publish config files with the extension.
+
 ## 1.2.2
 
 - Fix incorrect arrow function detection.

@@ -8,4 +8,6 @@ screenshots/**
 samples/**
 Contributing.md
 tsconfig.json
-prettier.config.cjs
+*.config.ts
+*.config.mjs
+*.config.cjs
