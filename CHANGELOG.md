@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.2
+
+- Fix incorrect arrow function detection.
+
 ## 1.2.1
 
 - Update readme.
