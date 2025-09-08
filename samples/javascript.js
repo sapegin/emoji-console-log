@@ -21,6 +21,6 @@ foo.forEach((x) => {
 const data = useSWR('index/partners', () => sdk.partners());
 // @
 
-//-                |
+//+                |
 const { data: partners } = useSWR('index/partners', () => sdk.partners());
 // @
