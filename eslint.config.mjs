@@ -10,6 +10,6 @@ export default [
     },
   },
   {
-    ignores: ['out/', 'src/test/files/', '.vscode-test/'],
+    ignores: ['out/', 'samples/'],
   },
 ];

@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { isAnonymousFunction } from './isAnonymousFunction';
+import { isArrowFunction } from './isArrowFunction';
 
 test('returns true if the LOC is an anonymous function', () => {
   const anonymousFunctionsLOCs = [
@@ -8,6 +8,6 @@ test('returns true if the LOC is an anonymous function', () => {
     'fullName => `Hello ${fullName}`',
   ];
   for (const anonymousFunctionLOC of anonymousFunctionsLOCs) {
-    expect(isAnonymousFunction(anonymousFunctionLOC)).to.equal(true);
+    expect(isArrowFunction(anonymousFunctionLOC)).to.equal(true);
   }
 });

@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { shouldTransformAnonymousFunction } from './shouldTransformAnonymousFunction';
+import { shouldTransformArrowFunction } from './shouldTransformArrowFunction';
 
 test('returns true if anonymous function needs to be transformed', () => {
   const anonymousFunctionsLOCs = [
@@ -8,9 +8,7 @@ test('returns true if anonymous function needs to be transformed', () => {
     'fullName => `Hello ${fullName}`',
   ];
   for (const anonymousFunctionLOC of anonymousFunctionsLOCs) {
-    expect(shouldTransformAnonymousFunction(anonymousFunctionLOC)).to.equal(
-      true,
-    );
+    expect(shouldTransformArrowFunction(anonymousFunctionLOC)).to.equal(true);
   }
 });
 
@@ -19,8 +17,8 @@ test('returns false if anonymous function is already transformed', () => {
     'const sayHello = fullName => { `Hello ${fullName}`',
   ];
   for (const transformedAnonymousFunction of transformedAnonymousFunctions) {
-    expect(
-      shouldTransformAnonymousFunction(transformedAnonymousFunction),
-    ).to.equal(false);
+    expect(shouldTransformArrowFunction(transformedAnonymousFunction)).to.equal(
+      false,
+    );
   }
 });

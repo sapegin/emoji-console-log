@@ -12,7 +12,6 @@ import {
   type LogMessage,
 } from '../types';
 import { getRandomEmoji } from './emojis';
-import { isAnonymousFunctionContext } from './isAnonymousFunctionContext';
 import { anonymousPropertyDebuggingMessage } from './anonymousPropertyDebuggingMessage';
 import { logDebugMessage } from './debug';
 import { getMultiLineContextVariable } from './getMultiLineContextVariable';
@@ -24,10 +23,11 @@ import { closingContextLine } from './closingContextLine';
 import { isObjectFunctionCall } from './isObjectFunctionCall';
 import { doesContainsNamedFunctionDeclaration } from './doesContainsNamedFunctionDeclaration';
 import { isFunctionAssignedToVariable } from './isFunctionAssignedToVariable';
-import { isAnonymousFunction } from './isAnonymousFunction';
-import { shouldTransformAnonymousFunction } from './shouldTransformAnonymousFunction';
+import { isArrowFunction } from './isArrowFunction';
+import { shouldTransformArrowFunction } from './shouldTransformArrowFunction';
 import { debugMessageLine } from './debugMessageLine';
 import { spacesBeforeLogMessage } from './spacesBeforeLogMessage';
+import { isArgumentOfArrowFunction } from './isArgumentOfArrowFunction';
 
 const logMessageTypeVerificationPriority = [
   LogMessageType.Decorator,
@@ -247,8 +247,8 @@ function getLogMessage(
     [LogMessageType.MultiLineAnonymousFunction]: () => {
       if (
         isFunctionAssignedToVariable(`${currentLineText}`) &&
-        isAnonymousFunction(currentLineText) &&
-        shouldTransformAnonymousFunction(currentLineText)
+        isArrowFunction(currentLineText) &&
+        shouldTransformArrowFunction(currentLineText)
       ) {
         return {
           type: LogMessageType.MultiLineAnonymousFunction,
@@ -389,7 +389,12 @@ export function insertMessage(
     return;
   }
 
-  if (isAnonymousFunctionContext(selectedVariable, selectedVariableLineLoc)) {
+  if (
+    isArrowFunction(selectedVariableLineLoc) &&
+    isArgumentOfArrowFunction(selectedVariableLineLoc, selectedVariable) &&
+    shouldTransformArrowFunction(selectedVariableLineLoc)
+  ) {
+    logDebugMessage('Anonymous function context', selectedVariable);
     anonymousPropertyDebuggingMessage(
       document,
       textEditor,

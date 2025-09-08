@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { isArgumentOfAnonymousFunction } from './isArgumentOfAnonymousFunction';
+import { isArgumentOfArrowFunction } from './isArgumentOfArrowFunction';
 
 test('returns true if the indicated parameter is an argument of the anonymous function', () => {
   const anonymousFunctionsArguments = [
@@ -21,19 +21,16 @@ test('returns true if the indicated parameter is an argument of the anonymous fu
     },
   ];
   for (const { loc, arg } of anonymousFunctionsArguments) {
-    expect(isArgumentOfAnonymousFunction(loc, arg)).to.equal(true);
+    expect(isArgumentOfArrowFunction(loc, arg)).to.equal(true);
   }
 });
 
 test('returns false if the indicated parameter is not an argument of the anonymous function', () => {
   expect(
-    isArgumentOfAnonymousFunction(
-      'function functionName(parameter){',
-      'parameter',
-    ),
+    isArgumentOfArrowFunction('function functionName(parameter){', 'parameter'),
   ).to.equal(false);
   expect(
-    isArgumentOfAnonymousFunction(
+    isArgumentOfArrowFunction(
       'const user = users.find(item => item.email === email)',
       'user',
     ),
