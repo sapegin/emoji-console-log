@@ -1,14 +1,14 @@
-import { Position, TextDocument, TextEditorEdit, TextLine } from 'vscode';
+import { Position, TextEditor, TextLine } from 'vscode';
 import { BracketType } from '../types';
 import { spacesBeforeLine, closingContextLine, CodeStyle } from '.';
 
-export function anonymousPropertyDebuggingMessage(
-  document: TextDocument,
-  textEditor: TextEditorEdit,
+export async function anonymousPropertyDebuggingMessage(
+  editor: TextEditor,
   style: CodeStyle,
   selectedPropertyLine: TextLine,
   debuggingMessage: string,
-): void {
+): Promise<void> {
+  const { document } = editor;
   const selectedVariablePropertyLoc = selectedPropertyLine.text;
   const anonymousFunctionLeftPart = selectedVariablePropertyLoc
     .split('=>')[0]
@@ -37,77 +37,81 @@ export function anonymousPropertyDebuggingMessage(
     anonymousFunctionClosedParenthesisLine - selectedPropertyLine.lineNumber !==
     0;
 
-  textEditor.delete(selectedPropertyLine.range);
-  textEditor.insert(
-    new Position(selectedPropertyLine.lineNumber, 0),
-    `${spacesBeforeSelectedVariableLine}${anonymousFunctionLeftPart} => {\n`,
-  );
-  if (isReturnBlockMultiLine) {
-    textEditor.insert(
+  await editor.edit((textEdit) => {
+    textEdit.delete(selectedPropertyLine.range);
+    textEdit.insert(
       new Position(selectedPropertyLine.lineNumber, 0),
-      `${spacesBeforeLinesToInsert}${debuggingMessage}\n`,
+      `${spacesBeforeSelectedVariableLine}${anonymousFunctionLeftPart} => {\n`,
     );
-    let currentLine = document.lineAt(selectedPropertyLine.lineNumber + 1);
-    do {
-      textEditor.delete(currentLine.range);
-      const addReturnKeyword =
-        currentLine.lineNumber === selectedPropertyLine.lineNumber + 1;
-      const spacesBeforeCurrentLine = spacesBeforeLine(
-        document,
-        currentLine.lineNumber,
+    if (isReturnBlockMultiLine) {
+      textEdit.insert(
+        new Position(selectedPropertyLine.lineNumber, 0),
+        `${spacesBeforeLinesToInsert}${debuggingMessage}\n`,
       );
-      if (currentLine.text.trim() === ')') {
+      let currentLine = document.lineAt(selectedPropertyLine.lineNumber + 1);
+      do {
+        textEdit.delete(currentLine.range);
+        const addReturnKeyword =
+          currentLine.lineNumber === selectedPropertyLine.lineNumber + 1;
+        const spacesBeforeCurrentLine = spacesBeforeLine(
+          document,
+          currentLine.lineNumber,
+        );
+        if (currentLine.text.trim() === ')') {
+          currentLine = document.lineAt(currentLine.lineNumber + 1);
+          continue;
+        }
+        if (currentLine.lineNumber === anonymousFunctionClosedParenthesisLine) {
+          textEdit.insert(
+            new Position(currentLine.lineNumber, 0),
+            `${spacesBeforeCurrentLine}${
+              addReturnKeyword ? 'return ' : style.tab
+            }${currentLine.text.trim().replace(/\)\s*$/, '')}\n`,
+          );
+        } else {
+          textEdit.insert(
+            new Position(currentLine.lineNumber, 0),
+            `${spacesBeforeCurrentLine}${
+              addReturnKeyword ? 'return ' : style.tab
+            }${currentLine.text.trim()}\n`,
+          );
+        }
         currentLine = document.lineAt(currentLine.lineNumber + 1);
-        continue;
-      }
-      if (currentLine.lineNumber === anonymousFunctionClosedParenthesisLine) {
-        textEditor.insert(
-          new Position(currentLine.lineNumber, 0),
-          `${spacesBeforeCurrentLine}${
-            addReturnKeyword ? 'return ' : style.tab
-          }${currentLine.text.trim().replace(/\)\s*$/, '')}\n`,
-        );
-      } else {
-        textEditor.insert(
-          new Position(currentLine.lineNumber, 0),
-          `${spacesBeforeCurrentLine}${
-            addReturnKeyword ? 'return ' : style.tab
-          }${currentLine.text.trim()}\n`,
-        );
-      }
-      currentLine = document.lineAt(currentLine.lineNumber + 1);
-    } while (
-      currentLine.lineNumber <
-      anonymousFunctionClosedParenthesisLine + 1
-    );
-    textEditor.insert(
-      new Position(anonymousFunctionClosedParenthesisLine + 1, 0),
-      `${spacesBeforeSelectedVariableLine}}${
-        style.semicolon && !isReturnBlockMultiLine ? style.semicolon : ''
-      })\n`,
-    );
-  } else {
-    const nextLineText = document.lineAt(
-      selectedPropertyLine.lineNumber + 1,
-    ).text;
-    const nextLineIsEndWithinTheMainFunction = /^\)/.test(nextLineText.trim());
-    textEditor.insert(
-      new Position(selectedPropertyLine.lineNumber, 0),
-      `${spacesBeforeLinesToInsert}${debuggingMessage}\n\n`,
-    );
-    textEditor.insert(
-      new Position(selectedPropertyLine.lineNumber, 0),
-      `${spacesBeforeLinesToInsert}return ${anonymousFunctionRightPart}${style.semicolon}\n`,
-    );
-    textEditor.insert(
-      new Position(selectedPropertyLine.lineNumber, 0),
-      `${spacesBeforeSelectedVariableLine}}${isCalledInsideFunction ? ')' : ''}${
-        style.semicolon &&
-        !isNextLineCallToOtherFunction &&
-        !nextLineIsEndWithinTheMainFunction
-          ? style.semicolon
-          : ''
-      }${nextLineText === '' ? '' : '\n'}`,
-    );
-  }
+      } while (
+        currentLine.lineNumber <
+        anonymousFunctionClosedParenthesisLine + 1
+      );
+      textEdit.insert(
+        new Position(anonymousFunctionClosedParenthesisLine + 1, 0),
+        `${spacesBeforeSelectedVariableLine}}${
+          style.semicolon && !isReturnBlockMultiLine ? style.semicolon : ''
+        })\n`,
+      );
+    } else {
+      const nextLineText = document.lineAt(
+        selectedPropertyLine.lineNumber + 1,
+      ).text;
+      const nextLineIsEndWithinTheMainFunction = /^\)/.test(
+        nextLineText.trim(),
+      );
+      textEdit.insert(
+        new Position(selectedPropertyLine.lineNumber, 0),
+        `${spacesBeforeLinesToInsert}${debuggingMessage}\n\n`,
+      );
+      textEdit.insert(
+        new Position(selectedPropertyLine.lineNumber, 0),
+        `${spacesBeforeLinesToInsert}return ${anonymousFunctionRightPart}${style.semicolon}\n`,
+      );
+      textEdit.insert(
+        new Position(selectedPropertyLine.lineNumber, 0),
+        `${spacesBeforeSelectedVariableLine}}${isCalledInsideFunction ? ')' : ''}${
+          style.semicolon &&
+          !isNextLineCallToOtherFunction &&
+          !nextLineIsEndWithinTheMainFunction
+            ? style.semicolon
+            : ''
+        }${nextLineText === '' ? '' : '\n'}`,
+      );
+    }
+  });
 }

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.4
+
+- Improve empty `console.log()` insertion, reposition cursor inside the `console.log()` statement.
+
 ## 1.2.3
 
 - Don’t publish config files with the extension.

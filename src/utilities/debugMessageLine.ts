@@ -1,13 +1,13 @@
 import { TextDocument } from 'vscode';
 import { getMultiLineContextVariable } from './getMultiLineContextVariable';
 import { BracketType, LogMessageType } from '../types';
-import type { LogMessage } from '../types/LogMessage';
+import type { LogMessageInfo } from '../types/LogMessage';
 
 export function debugMessageLine(
   document: TextDocument,
   selectionLine: number,
   selectedVariable: string,
-  logMessage: LogMessage,
+  logMessage: LogMessageInfo,
 ): number {
   switch (logMessage.type) {
     case LogMessageType.ObjectLiteral: {

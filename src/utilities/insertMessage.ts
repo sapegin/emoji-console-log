@@ -1,7 +1,8 @@
 import {
   Position,
+  Selection,
   type TextDocument,
-  type TextEditorEdit,
+  type TextEditor,
   type TextLine,
 } from 'vscode';
 import type { CodeStyle } from './codeStyle';
@@ -9,7 +10,7 @@ import {
   BracketType,
   LogMessageType,
   type ExtensionProperties,
-  type LogMessage,
+  type LogMessageInfo,
 } from '../types';
 import { getRandomEmoji } from './emojis';
 import { anonymousPropertyDebuggingMessage } from './anonymousPropertyDebuggingMessage';
@@ -43,26 +44,56 @@ const logMessageTypeVerificationPriority = [
   LogMessageType.PrimitiveAssignment,
 ];
 
-function baseDebuggingMessage(
-  document: TextDocument,
-  textEditor: TextEditorEdit,
+/**
+ * Add an empty console.log() to an empty line and adjusts the cursor position
+ * to be inside the console.log() call.
+ */
+async function emptyLineDebuggingMessage(
+  editor: TextEditor,
+  lineOfSelectedVariable: number,
+  debuggingMessage: string,
+  logFunction: string,
+): Promise<void> {
+  // Insert the log at the cursor line
+  await editor.edit((textEdit) => {
+    textEdit.insert(
+      new Position(lineOfSelectedVariable, 0),
+      `${debuggingMessage}\n`,
+    );
+  });
+
+  // Place the cursor inside the log, after the emoji:
+  //
+  // Example: console.log('🦆|')
+  const newPosition = new Position(
+    lineOfSelectedVariable,
+    debuggingMessage.indexOf(logFunction) + logFunction.length + 4,
+  );
+  editor.selection = new Selection(newPosition, newPosition);
+}
+
+async function baseDebuggingMessage(
+  editor: TextEditor,
   lineOfLogMessage: number,
   debuggingMessage: string,
   insertEmptyLineBeforeLogMessage: boolean,
   insertEmptyLineAfterLogMessage: boolean,
-): void {
-  textEditor.insert(
-    new Position(Math.min(lineOfLogMessage, document.lineCount), 0),
-    `${insertEmptyLineBeforeLogMessage ? '\n' : ''}${
-      lineOfLogMessage === document.lineCount ? '\n' : ''
-    }${debuggingMessage}\n${insertEmptyLineAfterLogMessage ? '\n' : ''}`,
-  );
+): Promise<void> {
+  await editor.edit((textEdit) => {
+    const { lineCount } = editor.document;
+    textEdit.insert(
+      new Position(Math.min(lineOfLogMessage, lineCount), 0),
+      `${insertEmptyLineBeforeLogMessage ? '\n' : ''}${
+        lineOfLogMessage === lineCount ? '\n' : ''
+      }${debuggingMessage}\n${insertEmptyLineAfterLogMessage ? '\n' : ''}`,
+    );
+  });
 }
 
-function getLogMessage(
+function getLogMessageInfo(
   document: TextDocument,
   selectionLine: number,
-): LogMessage {
+): LogMessageInfo {
   const currentLineText: string = document.lineAt(selectionLine).text;
   const multilineParenthesisVariable = getMultiLineContextVariable(
     document,
@@ -76,7 +107,7 @@ function getLogMessage(
   );
 
   const logMessageTypesChecks: {
-    [key in LogMessageType]: () => LogMessage | undefined;
+    [key in LogMessageType]: () => LogMessageInfo | undefined;
   } = {
     [LogMessageType.ObjectLiteral]: () => {
       if (document.lineCount === selectionLine + 1) {
@@ -279,8 +310,19 @@ function getLogMessage(
 }
 
 /**
- * Returns true when we're about to insert a log message on top of another
- * log message
+ * Returns true if we should add an empty line after a log.
+ */
+function shouldInsertEmptyLineBeforeLogMessage(
+  lineOfLogMessage: number,
+  lineOfSelectedVariable: number,
+) {
+  return lineOfLogMessage - lineOfSelectedVariable > 1;
+}
+
+/**
+ * Returns true if we should add an empty line in front of a log.
+ *
+ * - When we insert a log message on top of another log message
  */
 function shouldInsertEmptyLineAfterLogMessage(
   document: TextDocument,
@@ -292,7 +334,30 @@ function shouldInsertEmptyLineAfterLogMessage(
   return text !== '' && text.startsWith(logFunction) === false;
 }
 
-function isEmptyBlockContext(document: TextDocument, logMessage: LogMessage) {
+/**
+ * We're adding a console.log() to an empty line.
+ */
+function isEmptyLineContext(currentLineText: string) {
+  return currentLineText.trim() === '';
+}
+
+/**
+ * We're adding a console.log() for an arrow function parameter.
+ */
+function isArrowFunctionArgumentContext(
+  selectedVariable: string,
+  selectedVariableLineText: string,
+) {
+  return (
+    isArgumentOfArrowFunction(selectedVariableLineText, selectedVariable) &&
+    shouldTransformArrowFunction(selectedVariableLineText)
+  );
+}
+
+function isEmptyBlockContext(
+  document: TextDocument,
+  logMessage: LogMessageInfo,
+) {
   if (logMessage.type === LogMessageType.MultilineParenthesis) {
     return /\){.*}/.test(
       document
@@ -308,9 +373,8 @@ function isEmptyBlockContext(document: TextDocument, logMessage: LogMessage) {
   return false;
 }
 
-function emptyBlockDebuggingMessage(
-  document: TextDocument,
-  textEditor: TextEditorEdit,
+async function emptyBlockDebuggingMessage(
+  editor: TextEditor,
   emptyBlockLine: TextLine,
   logMessageLine: number,
   debuggingMessage: string,
@@ -319,67 +383,113 @@ function emptyBlockDebuggingMessage(
   if (/\){.*}/.test(emptyBlockLine.text.replaceAll(/\s/g, ''))) {
     const textBeforeClosedFunctionParenthesis =
       emptyBlockLine.text.split(')')[0];
-    textEditor.delete(emptyBlockLine.rangeIncludingLineBreak);
-    textEditor.insert(
-      new Position(Math.min(logMessageLine, document.lineCount), 0),
-      `${textBeforeClosedFunctionParenthesis}) {\n${
-        logMessageLine === document.lineCount ? '\n' : ''
-      }${spacesBeforeMessage}${debuggingMessage}\n${spacesBeforeMessage}}\n`,
-    );
+    await editor.edit((textEdit) => {
+      const { lineCount } = editor.document;
+      textEdit.delete(emptyBlockLine.rangeIncludingLineBreak);
+      textEdit.insert(
+        new Position(Math.min(logMessageLine, lineCount), 0),
+        `${textBeforeClosedFunctionParenthesis}) {\n${
+          logMessageLine === lineCount ? '\n' : ''
+        }${spacesBeforeMessage}${debuggingMessage}\n${spacesBeforeMessage}}\n`,
+      );
+    });
   }
 }
 
-export function insertMessage(
-  textEditor: TextEditorEdit,
-  document: TextDocument,
+/**
+ * Returns an empty console.log() statement.
+ *
+ * Example: console.log('🦆');
+ */
+function getEmptyConsoleLog(
+  { quote, semicolon }: CodeStyle,
+  logFunction: string,
+) {
+  const emoji = getRandomEmoji();
+  const message = `${quote}${emoji}${quote}`;
+  return `${logFunction}(${message})${semicolon}`;
+}
+
+/**
+ * Returns a console.log() statement.
+ *
+ * Example: console.log('🦆 foo', foo);
+ */
+function getConsoleLog(
+  { quote, semicolon }: CodeStyle,
+  logFunction: string,
+  variable: string,
+) {
+  const emoji = getRandomEmoji();
+  const message = `${quote}${emoji} ${variable}${quote}`;
+  return `${logFunction}(${message}, ${variable})${semicolon}`;
+}
+
+export async function insertMessage(
+  editor: TextEditor,
   selectedVariable: string,
   lineOfSelectedVariable: number,
   style: CodeStyle,
   { logFunction }: ExtensionProperties,
-): void {
-  const logMessage = getLogMessage(document, lineOfSelectedVariable);
+): Promise<void> {
+  const { document } = editor;
+  const logMessageInfo = getLogMessageInfo(document, lineOfSelectedVariable);
   const lineOfLogMessage = debugMessageLine(
-    document,
+    editor.document,
     lineOfSelectedVariable,
     selectedVariable,
-    logMessage,
+    logMessageInfo,
   );
   const spacesBeforeMessage = spacesBeforeLogMessage(
-    document,
+    editor.document,
     lineOfSelectedVariable,
     lineOfLogMessage,
   );
 
-  const insertEmptyLineBeforeLogMessage =
-    lineOfLogMessage - lineOfSelectedVariable > 1;
+  const selectedVariableLine = document.lineAt(lineOfSelectedVariable);
+  const selectedVariableLineText = selectedVariableLine.text;
+  logDebugMessage('Line under cursor:', selectedVariableLineText);
+
+  const insertEmptyLineBeforeLogMessage = shouldInsertEmptyLineBeforeLogMessage(
+    lineOfLogMessage,
+    lineOfSelectedVariable,
+  );
   const insertEmptyLineAfterLogMessage = shouldInsertEmptyLineAfterLogMessage(
     document,
     lineOfLogMessage,
     logFunction,
   );
+  logDebugMessage('Add empty line before:', insertEmptyLineBeforeLogMessage);
+  logDebugMessage('Add empty line after:', insertEmptyLineAfterLogMessage);
 
-  const { quote, semicolon } = style;
-  const emoji = getRandomEmoji();
-  const message = selectedVariable
-    ? `${quote}${emoji} ${selectedVariable}${quote}`
-    : `${quote}${emoji}${quote}`;
   const debuggingMessageContent = selectedVariable
-    ? `${logFunction}(${message}, ${selectedVariable})${semicolon}`
-    : `${logFunction}(${message})${semicolon}`;
+    ? getConsoleLog(style, logFunction, selectedVariable)
+    : getEmptyConsoleLog(style, logFunction);
   const debuggingMessage = `${spacesBeforeMessage}${debuggingMessageContent}`;
-  const selectedVariableLine = document.lineAt(lineOfSelectedVariable);
-  const selectedVariableLineLoc = selectedVariableLine.text;
-  if (isEmptyBlockContext(document, logMessage)) {
+
+  if (isEmptyLineContext(selectedVariableLineText)) {
+    logDebugMessage('Empty line context');
+
+    return emptyLineDebuggingMessage(
+      editor,
+      lineOfSelectedVariable,
+      debuggingMessage,
+      logFunction,
+    );
+  }
+
+  if (isEmptyBlockContext(document, logMessageInfo)) {
+    logDebugMessage('Empty block context');
+
     const emptyBlockLine =
-      logMessage.type === LogMessageType.MultilineParenthesis
-        ? document.lineAt(logMessage.metadata.closingContextLine)
-        : (logMessage.type === LogMessageType.NamedFunction
-          ? document.lineAt(logMessage.metadata.line)
+      logMessageInfo.type === LogMessageType.MultilineParenthesis
+        ? document.lineAt(logMessageInfo.metadata.closingContextLine)
+        : (logMessageInfo.type === LogMessageType.NamedFunction
+          ? document.lineAt(logMessageInfo.metadata.line)
           : undefined);
     if (emptyBlockLine) {
-      emptyBlockDebuggingMessage(
-        document,
-        textEditor,
+      return emptyBlockDebuggingMessage(
+        editor,
         emptyBlockLine,
         lineOfLogMessage,
         debuggingMessageContent,
@@ -390,23 +500,20 @@ export function insertMessage(
   }
 
   if (
-    isArgumentOfArrowFunction(selectedVariableLineLoc, selectedVariable) &&
-    shouldTransformArrowFunction(selectedVariableLineLoc)
+    isArrowFunctionArgumentContext(selectedVariable, selectedVariableLineText)
   ) {
     logDebugMessage('Anonymous function context', selectedVariable);
-    anonymousPropertyDebuggingMessage(
-      document,
-      textEditor,
+
+    return anonymousPropertyDebuggingMessage(
+      editor,
       style,
       selectedVariableLine,
       debuggingMessageContent,
     );
-    return;
   }
 
-  baseDebuggingMessage(
-    document,
-    textEditor,
+  return baseDebuggingMessage(
+    editor,
     lineOfLogMessage,
     debuggingMessage,
     insertEmptyLineBeforeLogMessage,

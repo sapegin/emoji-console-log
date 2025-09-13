@@ -21,19 +21,19 @@ export type NamedFunctionMetadata = {
   line: number;
 };
 
-export type LogMessage =
+export type LogMessageInfo =
   | {
       type: Extract<
         LogMessageType,
-        | 'None'
-        | 'ObjectLiteral'
-        | 'Decorator'
         | 'ArrayAssignment'
-        | 'Ternary'
-        | 'ObjectFunctionCallAssignment'
-        | 'NamedFunctionAssignment'
+        | 'Decorator'
         | 'MultiLineAnonymousFunction'
+        | 'NamedFunctionAssignment'
+        | 'None'
+        | 'ObjectFunctionCallAssignment'
+        | 'ObjectLiteral'
         | 'PrimitiveAssignment'
+        | 'Ternary'
       >;
     }
   | {

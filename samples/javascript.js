@@ -24,3 +24,9 @@ const data = useSWR('index/partners', () => sdk.partners());
 //+                |
 const { data: partners } = useSWR('index/partners', () => sdk.partners());
 // @
+
+//+
+function readJsonFile(file) {
+  // |@
+  return JSON.parse(fs.readFileSync(file, 'utf8'));
+}

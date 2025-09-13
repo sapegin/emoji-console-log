@@ -45,15 +45,12 @@ export async function addLogMessageCommand(
 
     logDebugMessage(`Insert log with selected variable '${selectedVariable}'`);
 
-    await editor.edit(async (editBuilder) => {
-      insertMessage(
-        editBuilder,
-        editor.document,
-        selectedVariable,
-        lineOfSelectedVariable,
-        style,
-        extensionProperties,
-      );
-    });
+    await insertMessage(
+      editor,
+      selectedVariable,
+      lineOfSelectedVariable,
+      style,
+      extensionProperties,
+    );
   }
 }
