@@ -1,5 +1,5 @@
 import { window, type Selection, type TextDocument } from 'vscode';
-import { ExtensionProperties } from '../types';
+import { ExtensionProperties } from '../types/ExtensionProperties';
 import { getFileCodeStyle, symbolRegExp } from '../utilities';
 import { logDebugMessage } from '../utilities/debug';
 import { insertMessage } from '../utilities/insertMessage';

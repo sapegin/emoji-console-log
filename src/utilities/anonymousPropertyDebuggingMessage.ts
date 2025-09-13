@@ -1,5 +1,5 @@
 import { Position, TextEditor, TextLine } from 'vscode';
-import { BracketType } from '../types';
+import { BracketType } from '../types/BracketType';
 import { spacesBeforeLine, closingContextLine, CodeStyle } from '.';
 
 export async function anonymousPropertyDebuggingMessage(

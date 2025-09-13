@@ -6,12 +6,6 @@ import {
   type TextLine,
 } from 'vscode';
 import type { CodeStyle } from './codeStyle';
-import {
-  BracketType,
-  LogMessageType,
-  type ExtensionProperties,
-  type LogMessageInfo,
-} from '../types';
 import { getRandomEmoji } from './emojis';
 import { anonymousPropertyDebuggingMessage } from './anonymousPropertyDebuggingMessage';
 import { logDebugMessage } from './debug';
@@ -29,6 +23,9 @@ import { shouldTransformArrowFunction } from './shouldTransformArrowFunction';
 import { debugMessageLine } from './debugMessageLine';
 import { spacesBeforeLogMessage } from './spacesBeforeLogMessage';
 import { isArgumentOfArrowFunction } from './isArgumentOfArrowFunction';
+import { LogMessageType, type LogMessageInfo } from '../types/LogMessage';
+import { BracketType } from '../types/BracketType';
+import type { ExtensionProperties } from '../types/ExtensionProperties';
 
 const logMessageTypeVerificationPriority = [
   LogMessageType.Decorator,

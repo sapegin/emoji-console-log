@@ -1,4 +1,5 @@
-import { BracketType, LogBracket } from '../types';
+import { BracketType } from '../types/BracketType';
+import type { LogBracket } from '../types/LogBracket';
 
 export function locBrackets(loc: string, bracketType: BracketType): LogBracket {
   let openingBrackets = 0;

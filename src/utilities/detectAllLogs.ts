@@ -1,5 +1,6 @@
 import type { TextDocument } from 'vscode';
-import { BracketType, type Message } from '../types';
+import { BracketType } from '../types/BracketType';
+import type { Message } from '../types/Message';
 import { spacesBeforeLogMessage } from './spacesBeforeLogMessage';
 import { closingContextLine } from './closingContextLine';
 import { emojis } from './emojis';

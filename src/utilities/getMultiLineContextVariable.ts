@@ -1,5 +1,6 @@
 import { TextDocument } from 'vscode';
-import { BracketType, MultilineContextVariable } from '../types';
+import { BracketType } from '../types/BracketType';
+import type { MultilineContextVariable } from '../types/MultilineContextVariable';
 import { locBrackets } from './locBrackets';
 import { closingContextLine } from './closingContextLine';
 

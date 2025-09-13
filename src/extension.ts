@@ -1,5 +1,5 @@
 import { commands, workspace, type WorkspaceConfiguration } from 'vscode';
-import { ExtensionProperties } from './types';
+import { ExtensionProperties } from './types/ExtensionProperties';
 import { addLogMessageCommand } from './commands/addLogMessage';
 import { commentAllLogMessagesCommand } from './commands/commentAllLogMessages';
 import { uncommentAllLogMessagesCommand } from './commands/uncommentAllLogMessages';

@@ -1,7 +1,7 @@
 import { TextDocument } from 'vscode';
 import { getMultiLineContextVariable } from './getMultiLineContextVariable';
-import { BracketType, LogMessageType } from '../types';
-import type { LogMessageInfo } from '../types/LogMessage';
+import { BracketType } from '../types/BracketType';
+import { LogMessageType, type LogMessageInfo } from '../types/LogMessage';
 
 export function debugMessageLine(
   document: TextDocument,
