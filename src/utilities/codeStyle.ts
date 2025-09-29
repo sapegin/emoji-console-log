@@ -1,10 +1,9 @@
 /* eslint-disable unicorn/prefer-module */
 /* eslint-disable @typescript-eslint/no-require-imports */
 
+import fsPromises from 'node:fs/promises';
 import path from 'node:path';
-import { readFileSync } from 'node:fs';
 import memoize from 'lodash/memoize';
-import { findUp } from 'find-up';
 import { TextEditorOptions } from 'vscode';
 import { logDebugMessage } from './debug';
 
@@ -23,6 +22,42 @@ export interface CodeStyle {
 const defaultTabWidth = 2;
 const defaultSemicolon = true;
 const defaultSingleQuote = false;
+
+/**
+ * Simplified version of https://github.com/sindresorhus/find-up-simple
+ */
+async function findUp(name: string, cwd: string) {
+  let directory = path.resolve(cwd ?? '');
+  const { root } = path.parse(directory);
+
+  while (directory) {
+    const filePath = path.join(directory, name);
+
+    try {
+      const stats = await fsPromises.stat(filePath);
+      if (stats.isFile()) {
+        return filePath;
+      }
+    } catch {
+      // Ignore errors
+    }
+
+    if (directory === root) {
+      break;
+    }
+
+    directory = path.dirname(directory);
+  }
+}
+
+async function findUpMultiple(names: string[], cwd: string) {
+  for (const name of names) {
+    const result = await findUp(name, cwd);
+    if (result) {
+      return result;
+    }
+  }
+}
 
 async function readPrettierConfigJavaScript(filepath: string) {
   try {
@@ -43,7 +78,7 @@ async function readPrettierConfigJavaScript(filepath: string) {
 
 async function readPrettierConfigJson(filepath: string) {
   try {
-    const config = JSON.parse(readFileSync(filepath, 'utf8'));
+    const config = JSON.parse(await fsPromises.readFile(filepath, 'utf8'));
 
     logDebugMessage(`Prettier config:`);
     logDebugMessage(JSON.stringify(config));
@@ -60,7 +95,7 @@ async function readPrettierConfigJson(filepath: string) {
 
 async function readPrettierConfigPackage(filepath: string) {
   try {
-    const packageJson = JSON.parse(readFileSync(filepath, 'utf8'));
+    const packageJson = JSON.parse(await fsPromises.readFile(filepath, 'utf8'));
 
     if (packageJson.prettier) {
       logDebugMessage(`Prettier config:`);
@@ -99,7 +134,7 @@ async function resolvePrettierConfig(filepath: string) {
   const cwd = path.dirname(filepath);
 
   // Try to find Prettier config
-  const configFile = await findUp(
+  const configFile = await findUpMultiple(
     [
       '.prettierrc',
       '.prettierrc.json',
@@ -110,9 +145,7 @@ async function resolvePrettierConfig(filepath: string) {
       '.prettierrc.cjs',
       'prettier.config.cjs',
     ],
-    {
-      cwd,
-    },
+    cwd,
   );
 
   if (configFile) {
@@ -124,9 +157,7 @@ async function resolvePrettierConfig(filepath: string) {
   }
 
   // Try to read configuration from package.json if no config file present
-  const packageFile = await findUp('package.json', {
-    cwd,
-  });
+  const packageFile = await findUp('package.json', cwd);
 
   if (packageFile) {
     logDebugMessage(`Package.json for ${filepath}:`);
