@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.5
+
+- Zero dependencies: remove `find-up` and `lodash` dependencies.
+
 ## 1.2.4
 
 - Improve empty `console.log()` insertion, reposition cursor inside the `console.log()` statement.
