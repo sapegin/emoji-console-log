@@ -3,7 +3,6 @@
 
 import fsPromises from 'node:fs/promises';
 import path from 'node:path';
-import memoize from 'lodash/memoize';
 import { TextEditorOptions } from 'vscode';
 import { logDebugMessage } from './debug';
 
@@ -24,6 +23,8 @@ const defaultSemicolon = true;
 const defaultSingleQuote = false;
 
 /**
+ * Finds a given file in all parent folders.
+ *
  * Simplified version of https://github.com/sindresorhus/find-up-simple
  */
 async function findUp(name: string, cwd: string) {
@@ -50,6 +51,9 @@ async function findUp(name: string, cwd: string) {
   }
 }
 
+/**
+ * Finds any of the given files in all parent folders.
+ */
 async function findUpMultiple(names: string[], cwd: string) {
   for (const name of names) {
     const result = await findUp(name, cwd);
@@ -57,6 +61,26 @@ async function findUpMultiple(names: string[], cwd: string) {
       return result;
     }
   }
+}
+
+/**
+ * Creates a function that memoizes the result of a given function.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function memoize<T extends (...args: any[]) => any>(fn: T): T {
+  const cache = new Map<string, ReturnType<T>>();
+
+  return ((...args: Parameters<T>) => {
+    const key = args[0];
+
+    if (cache.has(key)) {
+      return cache.get(key);
+    }
+
+    const result = fn(...args);
+    cache.set(key, result);
+    return result;
+  }) as T;
 }
 
 async function readPrettierConfigJavaScript(filepath: string) {

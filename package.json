@@ -112,11 +112,7 @@
     "publish:ovsx": "npx ovsx publish",
     "prepare": "husky"
   },
-  "dependencies": {
-    "lodash": "^4.17.21"
-  },
   "devDependencies": {
-    "@types/lodash": "^4.17.13",
     "@types/node": "^22.12.0",
     "@types/vscode": "^1.50.0",
     "@vscode/vsce": "^3.6.2",
