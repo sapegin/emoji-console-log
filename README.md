@@ -85,8 +85,8 @@ The changelog can be found on the [Changelog.md](./Changelog.md) file.
 
 Check out my other Visual Studio Code extensions:
 
+- [Grim Wrapper](https://marketplace.visualstudio.com/items?itemName=sapegin.grim-wrapper): minimalist comment, Markdown, and plain text wrapping
 - [Just Blame](https://marketplace.visualstudio.com/items?itemName=sapegin.just-blame): Git Blame annotations, inspired by JetBrains editors
-- [New File Now](https://marketplace.visualstudio.com/items?itemName=sapegin.new-file-now): create new files from the command palette
 - [Notebox](https://marketplace.visualstudio.com/items?itemName=sapegin.notebox): take quick notes in the bottom panel
 - [Todo Tomorrow](https://marketplace.visualstudio.com/items?itemName=sapegin.todo-tomorrow): Highlights `TODO`, `HACK`, `FIXME`, etc. comments
 - [Mini Markdown](https://marketplace.visualstudio.com/items?itemName=sapegin.mini-markdown): minimalist kit for comfortable Markdown writing
