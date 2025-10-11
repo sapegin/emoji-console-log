@@ -1,6 +1,3 @@
-/* eslint-disable unicorn/prefer-module */
-/* eslint-disable @typescript-eslint/no-require-imports */
-
 import fsPromises from 'node:fs/promises';
 import path from 'node:path';
 import { TextEditorOptions } from 'vscode';
@@ -85,6 +82,7 @@ function memoize<T extends (...args: any[]) => any>(fn: T): T {
 
 async function readPrettierConfigJavaScript(filepath: string) {
   try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports, unicorn/prefer-module
     const config = require(filepath);
 
     logDebugMessage(`Prettier config:`);
