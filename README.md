@@ -1,5 +1,7 @@
 # Emoji Console Log Visual Studio Code extension 🦆
 
+**[Repository moved](https://github.com/sapegin/raccoon-vscode/tree/main/extensions/emoji-console-log)**
+
 Visual Studio Code extension to insert `console.log()` statement with a random emoji and a variable (object, function, etc.) under your cursor to make debugging JavaScript and TypeScript code easier.
 
 **Install from [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=sapegin.emoji-console-log) or [Open VSX Registry](https://open-vsx.org/extension/sapegin/emoji-console-log)**
